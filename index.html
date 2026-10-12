@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>松電キャラクターズ図鑑</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --pine:#1F4D3A; --pine-soft:#2E6B52; --bolt:#F2C230; --paper:#F5F7F2; --sheet:#FFFFFF;
+  --ink:#16201B; --muted:#5C6B63; --line:#D6DFD9; --mist:#E8EEEA;
+  --display:"Dela Gothic One","Hiragino Sans","Yu Gothic",sans-serif;
+  --body:"Zen Kaku Gothic New","Hiragino Sans","Yu Gothic","Meiryo",sans-serif;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --pine:#7FC8A4; --pine-soft:#5FAE88; --bolt:#F2C230; --paper:#0F1713; --sheet:#17221C;
+    --ink:#E6EEE9; --muted:#9AADA3; --line:#2A3A32; --mist:#1E2C25;
+  }
+}
+:root[data-theme="dark"]{
+  --pine:#7FC8A4; --pine-soft:#5FAE88; --bolt:#F2C230; --paper:#0F1713; --sheet:#17221C;
+  --ink:#E6EEE9; --muted:#9AADA3; --line:#2A3A32; --mist:#1E2C25;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);line-height:1.7;font-size:15px}
+.wrap{max-width:1120px;margin:0 auto;padding:0 20px}
+
+header.hero{padding:48px 0 28px;border-bottom:3px solid var(--pine)}
+.hero h1{font-family:var(--display);font-weight:400;font-size:clamp(34px,7vw,64px);line-height:1.15;margin:0;color:var(--pine);letter-spacing:.02em}
+.hero h1 .bolt{display:inline-block;width:.55em;height:.8em;margin-left:.15em;background:var(--bolt);clip-path:polygon(55% 0,10% 58%,45% 58%,30% 100%,90% 38%,55% 38%,75% 0);vertical-align:-.05em}
+.hero p{margin:10px 0 0;color:var(--muted)}
+
+.controls{position:sticky;top:0;z-index:5;background:var(--paper);padding:14px 0;border-bottom:1px solid var(--line);
+  padding-top:calc(14px + env(safe-area-inset-top,0px));margin-top:-1px}
+.controls .wrap{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.controls input,.controls select{font:inherit;color:var(--ink);background:var(--sheet);border:1.5px solid var(--line);border-radius:8px;padding:8px 12px;min-height:42px}
+.controls input{flex:1 1 220px}
+.controls input:focus-visible,.controls select:focus-visible,button:focus-visible{outline:3px solid var(--bolt);outline-offset:2px}
+.count{color:var(--muted);font-size:13px;margin-left:auto}
+
+main{padding:24px 0 64px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px;list-style:none;margin:0;padding:0}
+.entry{width:100%;text-align:left;font:inherit;color:inherit;cursor:pointer;background:var(--sheet);border:1.5px solid var(--line);border-radius:12px;padding:14px 16px;display:grid;grid-template-columns:auto auto 1fr;column-gap:14px;row-gap:6px;align-items:center}
+.entry:hover{border-color:var(--pine-soft)}
+.no{font-family:var(--display);font-size:30px;line-height:1;color:var(--pine);min-width:2.2ch;text-align:right}
+.who{min-width:0}
+.who .name{font-weight:700;font-size:18px;line-height:1.3}
+.who .yomi{font-size:12px;color:var(--muted)}
+.meta{grid-column:1/-1;display:flex;align-items:center;gap:10px;font-size:12px;color:var(--muted)}
+.ki{background:var(--pine);color:var(--paper);border-radius:4px;padding:1px 7px;font-weight:700;white-space:nowrap}
+.team{border:1.5px solid var(--pine);color:var(--pine);border-radius:4px;padding:0 6px;font-weight:700;white-space:nowrap}
+.bar{flex:1;height:6px;background:var(--mist);border-radius:3px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--bolt)}
+.score{font-variant-numeric:tabular-nums;font-weight:700;color:var(--ink)}
+.status{padding:48px 0;text-align:center;color:var(--muted)}
+.status button{font:inherit;cursor:pointer;margin-top:8px;background:var(--pine);color:var(--paper);border:none;border-radius:8px;padding:8px 16px;min-height:42px}
+.empty{padding:48px 0;text-align:center;color:var(--muted)}
+
+dialog{border:none;padding:0;border-radius:16px;background:var(--sheet);color:var(--ink);width:min(720px,calc(100vw - 24px));max-height:calc(100vh - 24px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px))}
+dialog::backdrop{background:rgba(10,20,15,.55)}
+.sheet-head{background:var(--pine);color:#fff;padding:22px 24px 18px;display:flex;gap:18px;align-items:flex-end}
+:root[data-theme="dark"] .sheet-head{color:#0F1713}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .sheet-head{color:#0F1713}}
+.sheet-head .bigno{font-family:var(--display);font-size:56px;line-height:.9;opacity:.9}
+.sheet-head h2{margin:0;font-size:28px;line-height:1.25}
+.sheet-head .sub{font-size:13px;opacity:.85}
+.sheet-body{display:grid;grid-template-columns:minmax(220px,300px) 1fr;gap:20px;padding:20px 24px}
+@media (max-width:620px){.sheet-body{grid-template-columns:1fr}.sheet-head .bigno{font-size:42px}.sheet-head h2{font-size:23px}}
+.radar svg{width:100%;height:auto;display:block}
+.radar text{font-family:var(--body);font-size:12px;fill:var(--muted)}
+.facts{margin:0;display:grid;grid-template-columns:auto 1fr;gap:6px 16px;align-content:start}
+.facts dt{color:var(--muted);font-size:13px}
+.facts dd{margin:0;font-variant-numeric:tabular-nums;font-weight:500}
+.total{grid-column:1/-1;margin-top:8px;padding:12px 14px;border-radius:10px;background:var(--mist);display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.total b{font-family:var(--display);font-weight:400;font-size:28px;color:var(--pine)}
+.total span{font-size:13px;color:var(--muted)}
+.sheet-foot{display:flex;justify-content:space-between;gap:8px;padding:0 24px 20px}
+.sheet-foot button{font:inherit;cursor:pointer;background:transparent;color:var(--ink);border:1.5px solid var(--line);border-radius:8px;padding:8px 14px;min-height:42px}
+.sheet-foot button:hover{border-color:var(--pine-soft)}
+.sheet-foot .close{margin-left:auto;background:var(--pine);border-color:var(--pine);color:var(--paper)}
+.avatar{width:48px;height:48px;border-radius:50%;overflow:hidden;background:var(--mist);display:grid;place-items:center;font-family:var(--display);font-size:20px;color:var(--pine);flex:none}
+.avatar img,.portrait img{width:100%;height:100%;object-fit:cover;display:block}
+.entry .line{grid-column:1/-1;font-size:13px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sheet-head{padding-bottom:28px;align-items:center}
+.portrait{width:112px;height:112px;border-radius:14px;overflow:hidden;background:rgba(255,255,255,.14);display:grid;place-items:center;font-family:var(--display);font-size:48px;flex:none;border:2px solid var(--bolt)}
+.hitokoto{margin:-16px 24px 0;position:relative;background:var(--bolt);color:#16201B;border-radius:12px;padding:10px 16px;font-weight:700}
+.prof{padding:0 24px 20px;display:grid;gap:14px}
+.prof h3{margin:0 0 4px;font-size:13px;color:var(--muted);font-weight:500}
+.prof p{margin:0;white-space:pre-wrap}
+.prof p.blank{color:var(--muted)}
+.likes{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.likes>div{border:1.5px solid var(--line);border-radius:10px;padding:10px 14px}
+.likes .like{border-color:var(--pine-soft)}
+@media (max-width:620px){.likes{grid-template-columns:1fr}.portrait{width:84px;height:84px;font-size:36px}}
+@media (prefers-reduced-motion:no-preference){dialog[open]{animation:pop .18s ease-out}@keyframes pop{from{transform:translateY(8px);opacity:0}}}
+</style>
+</head>
+<body>
+<header class="hero"><div class="wrap">
+  <h1>松電キャラクターズ図鑑<span class="bolt" aria-hidden="true"></span></h1>
+  <p id="lead">最新のデータを読み込んでいます。</p>
+</div></header>
+
+<div class="controls"><div class="wrap">
+  <input id="q" type="search" placeholder="名前・よみ・所属などで探す" aria-label="名前・よみ・所属などで探す">
+  <select id="ki" aria-label="期で絞り込む"><option value="">すべての期</option></select>
+  <select id="sort" aria-label="並び順">
+    <option value="no">番号順</option>
+    <option value="total">合計能力値が高い順</option>
+    <option value="sum5">5ステ計が高い順</option>
+    <option value="iq">IQが高い順</option>
+    <option value="h">身長が高い順</option>
+    <option value="age">年齢が若い順</option>
+    <option value="bday">誕生日順（1月から）</option>
+  </select>
+  <span class="count" id="count" aria-live="polite"></span>
+</div></div>
+
+<main><div class="wrap">
+  <div class="status" id="status" role="status"><p id="statusMsg">データを読み込んでいます…</p><button id="retry" type="button" hidden>もう一度読み込む</button></div>
+  <ul class="grid" id="grid"></ul>
+  <p class="empty" id="empty" hidden>条件に合うキャラクターがいません。検索語や期の絞り込みを変えてください。</p>
+</div></main>
+
+<dialog id="dlg" aria-labelledby="dName">
+  <div class="sheet-head">
+    <div class="portrait" id="dImg"></div>
+    <div><div class="sub" id="dKi"></div><h2 id="dName"></h2><div class="sub" id="dYomi"></div></div>
+  </div>
+  <p class="hitokoto" id="dHito" hidden></p>
+  <div class="sheet-body">
+    <div class="radar" id="dRadar"></div>
+    <dl class="facts" id="dFacts"></dl>
+  </div>
+  <div class="prof" id="dProf"></div>
+  <div class="sheet-foot">
+    <button id="prev" type="button">前へ</button>
+    <button id="next" type="button">次へ</button>
+    <button class="close" id="close" type="button">閉じる</button>
+  </div>
+</dialog>
+<script>
+// ▼ Apps Script を「ウェブアプリ」としてデプロイしたときのURL（最後が /exec）に置き換えてください
+const API_URL = "https://script.google.com/macros/s/AKfycbzWvAklPIOzrBTwHUvLd0RS-2hI2x1bdgr4EgeiTBAZEAxSQBlVeEfjDj8n9dCM-KrXFA/exec";
+
+const STATS = ["体力","パワー","ガード","コミュ力","学力"];
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"]/g, ch => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[ch]));
+const initial = c => (c.name.split(" ")[1] || c.name)[0] || "?";
+const face = c => c.image
+  ? `<span class="avatar"><img src="${esc(c.image)}" alt="" loading="lazy" data-fallback="${esc(initial(c))}"></span>`
+  : `<span class="avatar" aria-hidden="true">${esc(initial(c))}</span>`;
+const txt = s => s ? `<p>${esc(s)}</p>` : `<p class="blank">未登録</p>`;
+
+let chars = [], view = [], maxTotal = 1, cur = 0;
+
+function setStatus(msg, isError){
+  $("status").hidden = !msg;
+  $("statusMsg").textContent = msg || "";
+  $("retry").hidden = !isError;
+}
+
+async function load(){
+  setStatus("データを読み込んでいます…");
+  try {
+    if (!/^https:\/\//.test(API_URL)) throw new Error("index.html の API_URL に、Apps Script のウェブアプリのURLを設定してください。");
+    const res = await fetch(API_URL);
+    if (!res.ok) throw new Error(`データを取得できませんでした（HTTP ${res.status}）。少し待ってから再読み込みしてください。`);
+    const json = await res.json();
+    if (json.error) throw new Error("スプレッドシートを読み取れませんでした: " + json.error);
+    build(json.characters || []);
+    setStatus("");
+  } catch (e) {
+    setStatus(e instanceof SyntaxError || e instanceof TypeError
+      ? "データを取得できませんでした。Apps Script のデプロイで「アクセスできるユーザー」が「全員」になっているか確認してください。"
+      : e.message, true);
+  }
+}
+
+function build(list){
+  const today = new Date();
+  chars = list.map(c => {
+    let age = today.getFullYear() - c.year;
+    if (today.getMonth() + 1 < c.month || (today.getMonth() + 1 === c.month && today.getDate() < c.day)) age--;
+    return { ...c, age, sum5: c.stats.reduce((a, b) => a + b, 0) };
+  });
+  const byTotal = [...chars].sort((a, b) => b.total - a.total);
+  byTotal.forEach((c, i) => c.rank = i + 1);
+  maxTotal = byTotal.length ? byTotal[0].total || 1 : 1;
+  const kis = [...new Set(chars.map(c => c.ki))].sort((a, b) => a - b);
+  $("lead").textContent = `${kis.length ? kis[kis.length-1] : 0}期・${chars.length}人のプロフィールと能力値。気になるキャラクターを選ぶと詳しいデータが見られます。`;
+  const keep = $("ki").value;
+  $("ki").innerHTML = `<option value="">すべての期</option>` +
+    kis.map(k => `<option value="${k}">${k}期生（${chars.filter(c => c.ki === k).length}人）</option>`).join("");
+  if (kis.includes(+keep)) $("ki").value = keep;
+  render();
+}
+
+const sorters = {
+  no: (a,b) => a.no - b.no, total: (a,b) => b.total - a.total, sum5: (a,b) => b.sum5 - a.sum5,
+  iq: (a,b) => b.iq - a.iq, h: (a,b) => b.height - a.height, age: (a,b) => a.age - b.age || a.no - b.no,
+  bday: (a,b) => a.month - b.month || a.day - b.day
+};
+
+function render(){
+  const q = $("q").value.trim().replace(/\s/g, "");
+  const ki = +$("ki").value;
+  view = chars.filter(c => (!ki || c.ki === ki) &&
+      (!q || [c.name, c.yomi, c.team, c.hitokoto, c.description, c.likes, c.dislikes].join("").replace(/\s/g, "").includes(q)))
+    .sort(sorters[$("sort").value]);
+  $("grid").innerHTML = view.map((c, i) => `
+    <li><button class="entry" type="button" data-i="${i}">
+      <span class="no">${c.no}</span>
+      ${face(c)}
+      <span class="who"><span class="name">${esc(c.name)}</span><br><span class="yomi">${esc(c.yomi)}</span></span>
+      ${c.hitokoto ? `<span class="line">「${esc(c.hitokoto)}」</span>` : ""}
+      <span class="meta"><span class="ki">${c.ki}期生</span>${c.team ? `<span class="team">${esc(c.team)}</span>` : ""}
+        <span class="bar" aria-hidden="true"><i style="width:${(c.total/maxTotal*100).toFixed(1)}%"></i></span>
+        <span class="score">${c.total.toFixed(2)}</span></span>
+    </button></li>`).join("");
+  $("count").textContent = chars.length ? `${view.length}人を表示中` : "";
+  $("empty").hidden = !chars.length || view.length > 0;
+}
+
+function radar(stats){
+  const S = 280, cx = S/2, cy = S/2 + 6, R = 100, MAX = 2000;
+  const pt = (i, r) => { const a = -Math.PI/2 + i*2*Math.PI/5; return [cx + r*Math.cos(a), cy + r*Math.sin(a)]; };
+  const poly = r => [0,1,2,3,4].map(i => pt(i, r).join(",")).join(" ");
+  let g = "";
+  [0.25,0.5,0.75,1].forEach(k => g += `<polygon points="${poly(R*k)}" fill="none" stroke="var(--line)" stroke-width="1"/>`);
+  [0,1,2,3,4].forEach(i => { const [x,y] = pt(i,R); g += `<line x1="${cx}" y1="${cy}" x2="${x}" y2="${y}" stroke="var(--line)"/>`; });
+  const shape = stats.map((v,i) => pt(i, R*Math.max(0, Math.min(v,MAX))/MAX).join(",")).join(" ");
+  g += `<polygon points="${shape}" fill="var(--bolt)" fill-opacity=".55" stroke="var(--pine)" stroke-width="2" stroke-linejoin="round"/>`;
+  stats.forEach((v,i) => {
+    const [x,y] = pt(i, R + 26);
+    g += `<text x="${x}" y="${y-4}" text-anchor="middle">${STATS[i]}</text><text x="${x}" y="${y+12}" text-anchor="middle" style="fill:var(--ink);font-weight:700">${v}</text>`;
+  });
+  return `<svg viewBox="0 0 ${S} ${S+8}" role="img" aria-label="能力値のレーダーチャート（最大2000）">${g}</svg>`;
+}
+
+function show(i){
+  if (!view.length) return;
+  cur = (i + view.length) % view.length;
+  const c = view[cur];
+  $("dImg").innerHTML = c.image ? `<img src="${esc(c.image)}" alt="${esc(c.name)}" data-fallback="${esc(initial(c))}">` : esc(initial(c));
+  $("dKi").textContent = `No.${c.no}　${c.ki}期生`;
+  $("dName").textContent = c.name;
+  $("dYomi").textContent = c.yomi;
+  $("dHito").hidden = !c.hitokoto;
+  $("dHito").textContent = c.hitokoto ? `「${c.hitokoto}」` : "";
+  $("dRadar").innerHTML = radar(c.stats);
+  $("dFacts").innerHTML = `
+    <dt>所属</dt><dd>${c.team ? esc(c.team) : "なし"}</dd>
+    <dt>誕生日</dt><dd>${c.year}年${c.month}月${c.day}日（${c.age}歳）</dd>
+    <dt>身長</dt><dd>${c.height} cm</dd>
+    <dt>体重</dt><dd>${c.weight.toFixed(1)} kg</dd>
+    <dt>5ステ計</dt><dd>${c.sum5.toLocaleString()}</dd>
+    <dt>IQ</dt><dd>${c.iq}</dd>
+    <dt>追加日</dt><dd>${esc(c.added)}</dd>
+    <div class="total"><div><span>合計能力値</span><br><b>${c.total.toFixed(2)}</b></div><span>${chars.length}人中 ${c.rank}位</span></div>`;
+  $("dProf").innerHTML = `
+    <div><h3>キャラクター説明</h3>${txt(c.description)}</div>
+    <div class="likes"><div class="like"><h3>好きなこと</h3>${txt(c.likes)}</div><div><h3>嫌いなこと</h3>${txt(c.dislikes)}</div></div>`;
+  $("prev").disabled = $("next").disabled = view.length < 2;
+}
+
+// 画像が読み込めなかったときは名前の1文字目を表示
+document.addEventListener("error", e => {
+  const img = e.target;
+  if (img.tagName === "IMG" && img.dataset.fallback !== undefined) img.parentNode.textContent = img.dataset.fallback;
+}, true);
+
+$("grid").addEventListener("click", e => {
+  const b = e.target.closest(".entry"); if (!b) return;
+  show(+b.dataset.i); if (!$("dlg").open) $("dlg").showModal();
+});
+$("prev").onclick = () => show(cur - 1);
+$("next").onclick = () => show(cur + 1);
+$("close").onclick = () => $("dlg").close();
+$("retry").onclick = load;
+$("dlg").addEventListener("click", e => { if (e.target === $("dlg")) $("dlg").close(); });
+$("dlg").addEventListener("keydown", e => {
+  if (e.key === "ArrowLeft") show(cur - 1);
+  if (e.key === "ArrowRight") show(cur + 1);
+});
+["q","ki","sort"].forEach(id => $(id).addEventListener("input", render));
+load();
+</script>
+</body>
+</html>
