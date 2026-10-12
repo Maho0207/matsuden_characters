@@ -6,167 +6,395 @@
 <title>松電キャラクターズ図鑑</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=M+PLUS+1:wght@400;500;700;800&family=Outfit:wght@500;700;800&display=swap" rel="stylesheet">
 <style>
 :root{
-  --pine:#1F4D3A; --pine-soft:#2E6B52; --bolt:#F2C230; --paper:#F5F7F2; --sheet:#FFFFFF;
-  --ink:#16201B; --muted:#5C6B63; --line:#D6DFD9; --mist:#E8EEEA;
-  --display:"Dela Gothic One","Hiragino Sans","Yu Gothic",sans-serif;
-  --body:"Zen Kaku Gothic New","Hiragino Sans","Yu Gothic","Meiryo",sans-serif;
+  --bg:#F3F9FD; --surface:#FFFFFF; --glass:rgba(243,249,253,.86);
+  --sky:#1E9BD7; --sky-deep:#0C5F8A; --sky-soft:#E3F3FB; --line:#CFE6F2;
+  --ink:#0F2A3A; --muted:#5B7486; --on-sky:#FFFFFF;
+  --hero:linear-gradient(130deg,#0E78B4 0%,#24A8E4 55%,#8FDCF8 100%);
+  --gold:#E8B43A; --silver:#9DB2C2; --bronze:#C98A5B;
+  --font:"M PLUS 1","Hiragino Sans","Yu Gothic","Meiryo",sans-serif;
+  --num:"Outfit","M PLUS 1",system-ui,sans-serif;
   box-sizing:border-box;
   padding-top:env(safe-area-inset-top,0px);
   padding-bottom:env(safe-area-inset-bottom,0px);
 }
 @media (prefers-color-scheme:dark){
   :root:not([data-theme="light"]){
-    --pine:#7FC8A4; --pine-soft:#5FAE88; --bolt:#F2C230; --paper:#0F1713; --sheet:#17221C;
-    --ink:#E6EEE9; --muted:#9AADA3; --line:#2A3A32; --mist:#1E2C25;
+    --bg:#081720; --surface:#0F2330; --glass:rgba(8,23,32,.86);
+    --sky:#5CC8F5; --sky-deep:#A3E0FB; --sky-soft:#13303F; --line:#1F3F52;
+    --ink:#E4F2FA; --muted:#8FA9B9; --on-sky:#06131B;
+    --hero:linear-gradient(130deg,#0A3550 0%,#11608A 60%,#2B93C4 100%);
   }
 }
 :root[data-theme="dark"]{
-  --pine:#7FC8A4; --pine-soft:#5FAE88; --bolt:#F2C230; --paper:#0F1713; --sheet:#17221C;
-  --ink:#E6EEE9; --muted:#9AADA3; --line:#2A3A32; --mist:#1E2C25;
+  --bg:#081720; --surface:#0F2330; --glass:rgba(8,23,32,.86);
+  --sky:#5CC8F5; --sky-deep:#A3E0FB; --sky-soft:#13303F; --line:#1F3F52;
+  --ink:#E4F2FA; --muted:#8FA9B9; --on-sky:#06131B;
+  --hero:linear-gradient(130deg,#0A3550 0%,#11608A 60%,#2B93C4 100%);
 }
 *,*::before,*::after{box-sizing:inherit}
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
-body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);line-height:1.7;font-size:15px}
-.wrap{max-width:1120px;margin:0 auto;padding:0 20px}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);line-height:1.6;font-size:15px;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1160px;margin:0 auto;padding:0 20px}
+button{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--sky);outline-offset:2px}
+[hidden]{display:none!important}
 
-header.hero{padding:48px 0 28px;border-bottom:3px solid var(--pine)}
-.hero h1{font-family:var(--display);font-weight:400;font-size:clamp(34px,7vw,64px);line-height:1.15;margin:0;color:var(--pine);letter-spacing:.02em}
-.hero h1 .bolt{display:inline-block;width:.55em;height:.8em;margin-left:.15em;background:var(--bolt);clip-path:polygon(55% 0,10% 58%,45% 58%,30% 100%,90% 38%,55% 38%,75% 0);vertical-align:-.05em}
-.hero p{margin:10px 0 0;color:var(--muted)}
+/* ヒーロー */
+.hero{background:var(--hero);color:#fff;padding:44px 0 36px;position:relative;overflow:hidden}
+.hero::after{content:"";position:absolute;right:-40px;top:-30px;width:280px;height:340px;background:rgba(255,255,255,.12);
+  clip-path:polygon(55% 0,10% 58%,45% 58%,30% 100%,90% 38%,55% 38%,75% 0);pointer-events:none}
+.hero h1{font-weight:800;font-size:clamp(30px,6vw,54px);line-height:1.15;margin:0;letter-spacing:.01em}
+.hero p{margin:10px 0 0;opacity:.92;max-width:60ch}
+.hero .stats{display:flex;gap:28px;margin-top:22px}
+.hero .stats b{display:block;font-family:var(--num);font-weight:800;font-size:30px;line-height:1}
+.hero .stats span{font-size:13px;opacity:.85}
 
-.controls{position:sticky;top:0;z-index:5;background:var(--paper);padding:14px 0;border-bottom:1px solid var(--line);
-  padding-top:calc(14px + env(safe-area-inset-top,0px));margin-top:-1px}
-.controls .wrap{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
-.controls input,.controls select{font:inherit;color:var(--ink);background:var(--sheet);border:1.5px solid var(--line);border-radius:8px;padding:8px 12px;min-height:42px}
-.controls input{flex:1 1 220px}
-.controls input:focus-visible,.controls select:focus-visible,button:focus-visible{outline:3px solid var(--bolt);outline-offset:2px}
+/* 操作バー */
+.controls{position:sticky;top:0;z-index:5;background:var(--glass);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--line);padding:12px 0;padding-top:calc(12px + env(safe-area-inset-top,0px))}
+.controls .wrap{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.seg{display:inline-flex;background:var(--sky-soft);border-radius:999px;padding:4px}
+.seg button{border:none;background:transparent;border-radius:999px;padding:7px 16px;cursor:pointer;font-weight:700;color:var(--muted);min-height:36px}
+.seg button[aria-pressed="true"]{background:var(--surface);color:var(--sky-deep);box-shadow:0 1px 4px rgba(12,95,138,.18)}
+.controls input,.controls select{font:inherit;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:8px 12px;min-height:44px}
+.controls input{flex:1 1 200px}
 .count{color:var(--muted);font-size:13px;margin-left:auto}
+.chips{display:flex;gap:6px;overflow-x:auto;padding:10px 0 2px;scrollbar-width:thin}
+.chips button{flex:none;border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:6px 14px;cursor:pointer;font-weight:500;min-height:36px}
+.chips button[aria-pressed="true"]{background:var(--sky);border-color:var(--sky);color:var(--on-sky);font-weight:700}
 
-main{padding:24px 0 64px}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px;list-style:none;margin:0;padding:0}
-.entry{width:100%;text-align:left;font:inherit;color:inherit;cursor:pointer;background:var(--sheet);border:1.5px solid var(--line);border-radius:12px;padding:14px 16px;display:grid;grid-template-columns:auto auto 1fr;column-gap:14px;row-gap:6px;align-items:center}
-.entry:hover{border-color:var(--pine-soft)}
-.no{font-family:var(--display);font-size:30px;line-height:1;color:var(--pine);min-width:2.2ch;text-align:right}
-.who{min-width:0}
-.who .name{font-weight:700;font-size:18px;line-height:1.3}
-.who .yomi{font-size:12px;color:var(--muted)}
-.meta{grid-column:1/-1;display:flex;align-items:center;gap:10px;font-size:12px;color:var(--muted)}
-.ki{background:var(--pine);color:var(--paper);border-radius:4px;padding:1px 7px;font-weight:700;white-space:nowrap}
-.team{border:1.5px solid var(--pine);color:var(--pine);border-radius:4px;padding:0 6px;font-weight:700;white-space:nowrap}
-.bar{flex:1;height:6px;background:var(--mist);border-radius:3px;overflow:hidden}
-.bar i{display:block;height:100%;background:var(--bolt)}
-.score{font-variant-numeric:tabular-nums;font-weight:700;color:var(--ink)}
-.status{padding:48px 0;text-align:center;color:var(--muted)}
-.status button{font:inherit;cursor:pointer;margin-top:8px;background:var(--pine);color:var(--paper);border:none;border-radius:8px;padding:8px 16px;min-height:42px}
+main{padding:24px 0 72px}
+.status{padding:56px 0;text-align:center;color:var(--muted)}
+.status button{cursor:pointer;margin-top:8px;background:var(--sky);color:var(--on-sky);border:none;border-radius:12px;padding:10px 18px;font-weight:700}
 .empty{padding:48px 0;text-align:center;color:var(--muted)}
 
-dialog{border:none;padding:0;border-radius:16px;background:var(--sheet);color:var(--ink);width:min(720px,calc(100vw - 24px));max-height:calc(100vh - 24px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px))}
-dialog::backdrop{background:rgba(10,20,15,.55)}
-.sheet-head{background:var(--pine);color:#fff;padding:22px 24px 18px;display:flex;gap:18px;align-items:flex-end}
-:root[data-theme="dark"] .sheet-head{color:#0F1713}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .sheet-head{color:#0F1713}}
-.sheet-head .bigno{font-family:var(--display);font-size:56px;line-height:.9;opacity:.9}
-.sheet-head h2{margin:0;font-size:28px;line-height:1.25}
-.sheet-head .sub{font-size:13px;opacity:.85}
-.sheet-body{display:grid;grid-template-columns:minmax(220px,300px) 1fr;gap:20px;padding:20px 24px}
-@media (max-width:620px){.sheet-body{grid-template-columns:1fr}.sheet-head .bigno{font-size:42px}.sheet-head h2{font-size:23px}}
+/* 共通パーツ */
+.pic{display:grid;place-items:center;overflow:hidden;background:linear-gradient(160deg,var(--sky-soft),var(--line));border-radius:18px;flex:none}
+.pic img{width:100%;height:100%;object-fit:cover;display:block}
+.initial{font-weight:800;color:var(--sky-deep)}
+.fit{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.tag{display:inline-block;font-size:12px;font-weight:700;border-radius:999px;padding:1px 9px;white-space:nowrap}
+.tag.ki{background:var(--sky-soft);color:var(--sky-deep)}
+.tag.team{background:var(--sky);color:var(--on-sky)}
+.num{font-family:var(--num);font-weight:700;font-size:13px;color:var(--muted)}
+.bar{display:block;height:6px;background:var(--sky-soft);border-radius:999px;overflow:hidden}
+.bar i{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,var(--sky),#7FD6F7)}
+
+/* カード */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:18px;list-style:none;margin:0;padding:0}
+.card{width:100%;height:100%;text-align:left;cursor:pointer;background:var(--surface);border:1px solid var(--line);border-radius:24px;padding:0;overflow:hidden;
+  display:flex;flex-direction:column}
+.card:hover{border-color:var(--sky);box-shadow:0 8px 24px rgba(30,155,215,.14)}
+.card .pic{width:100%;aspect-ratio:5/6;border-radius:0;position:relative}
+.card .pic img{object-position:center top}
+.card .initial{font-size:76px}
+.badge{position:absolute;left:10px;top:10px;font-family:var(--num);font-weight:800;font-size:13px;background:var(--glass);color:var(--sky-deep);
+  border-radius:999px;padding:2px 10px;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+.card .body{flex:1;display:flex;flex-direction:column;justify-content:space-between;gap:10px;padding:12px 14px 14px;min-width:0}
+.card .info{min-width:0}
+.card .tags{display:flex;align-items:center;gap:5px;flex-wrap:wrap;margin-bottom:6px}
+.card .name{font-weight:800;font-size:19px;line-height:1.35}
+.card .yomi{font-size:12px;color:var(--muted)}
+.card .line{font-size:12px;color:var(--sky-deep);margin-top:4px}
+.card .foot{display:grid;grid-template-columns:1fr auto auto;gap:6px 8px;align-items:baseline;font-size:11px;color:var(--muted);
+  padding-top:10px;border-top:1px dashed var(--line)}
+.card .foot .bar{grid-column:1/-1}
+.card .flabel{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.card .score{font-family:var(--num);font-weight:700;font-size:15px;color:var(--ink)}
+.card .rk{font-family:var(--num);font-weight:700;color:var(--sky-deep)}
+.tag.lead{background:var(--gold);color:#3A2A00}
+
+/* ランキング */
+.ranking{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.row{width:100%;text-align:left;cursor:pointer;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:10px 14px;
+  display:grid;grid-template-columns:52px 56px minmax(0,1fr) minmax(140px,36%);gap:12px;align-items:center}
+.row:hover{border-color:var(--sky)}
+.place{font-family:var(--num);font-weight:800;font-size:24px;text-align:center;color:var(--muted)}
+.row.r1 .place{color:var(--gold)} .row.r2 .place{color:var(--silver)} .row.r3 .place{color:var(--bronze)}
+.row.r1{border-color:var(--gold)}
+.row .pic{width:56px;height:56px;border-radius:14px}
+.row .initial{font-size:22px}
+.row .name{font-weight:800;font-size:17px}
+.row .sub{font-size:12px;color:var(--muted)}
+.row .val{display:grid;grid-template-columns:1fr auto;align-items:center;gap:10px}
+.row .val b{font-family:var(--num);font-weight:700;font-size:17px;min-width:5ch;text-align:right}
+@media (max-width:620px){
+  .row{grid-template-columns:40px 48px minmax(0,1fr);gap:4px 10px}
+  .row .pic{width:48px;height:48px}
+  .row .val{grid-column:2/-1}
+  .place{font-size:20px}
+}
+
+/* 期データ */
+.gens{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:18px}
+.gen{background:var(--surface);border:1px solid var(--line);border-radius:24px;overflow:hidden;display:flex;flex-direction:column;height:100%}
+.gen-head{background:var(--hero);color:#fff;padding:16px 18px;display:flex;align-items:flex-end;gap:12px}
+.gen-no{font-family:var(--num);font-weight:800;font-size:42px;line-height:.9;white-space:nowrap}
+.gen-no small{font-family:var(--font);font-size:14px;font-weight:700;margin-left:2px}
+.gen-team{flex:1;min-width:0;font-weight:800;font-size:18px;line-height:1.3}
+.gen-team.unset{opacity:.75;font-weight:500;font-size:13px}
+.gen-count{font-size:13px;opacity:.92;white-space:nowrap}
+.gen-body{padding:16px 18px;display:grid;gap:14px;flex:1;align-content:start}
+.leader{display:flex;align-items:center;gap:12px;width:100%;text-align:left;background:var(--sky-soft);border:1px solid transparent;border-radius:16px;padding:8px 12px 8px 8px}
+button.leader{cursor:pointer}
+button.leader:hover{border-color:var(--sky)}
+.leader .pic{width:48px;height:58px;border-radius:12px}
+.leader .pic img{object-position:center top}
+.leader .initial{font-size:22px}
+.leader .who{flex:1;min-width:0}
+.leader small{display:block;font-size:12px;color:var(--muted)}
+.leader b{font-size:17px}
+.avg-total{display:flex;align-items:baseline;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.avg-total span{font-size:13px;color:var(--muted)}
+.avg-total b{font-family:var(--num);font-weight:800;font-size:28px;color:var(--sky-deep);margin-left:auto}
+.avg-total em{font-style:normal;font-family:var(--num);font-weight:700;color:var(--muted);font-size:13px}
+.avg-stats{display:grid;grid-template-columns:auto 1fr 3.5em;gap:7px 10px;align-items:center;font-size:13px}
+.avg-stats .lbl{color:var(--muted)}
+.avg-stats .v{font-family:var(--num);font-weight:700;text-align:right}
+.gen-facts{margin:0;display:grid;grid-template-columns:auto 1fr;gap:5px 14px;font-size:13px;padding-top:12px;border-top:1px dashed var(--line)}
+.gen-facts dt{color:var(--muted)}
+.gen-facts dd{margin:0;font-weight:500;min-width:0}
+.link{background:none;border:none;padding:0;color:var(--sky-deep);font-weight:700;cursor:pointer;text-align:left}
+.link:hover{text-decoration:underline}
+.gen-foot{padding:0 18px 18px}
+.gen-foot button{width:100%;cursor:pointer;background:var(--sky);color:var(--on-sky);border:none;border-radius:12px;padding:10px;font-weight:700;min-height:44px}
+
+/* 誕生日 */
+.sec-title{font-size:20px;font-weight:800;margin:0 0 12px}
+.upcoming{margin-bottom:40px}
+.countdown{position:absolute;left:10px;bottom:10px;background:var(--sky);color:var(--on-sky);font-weight:800;font-size:15px;
+  border-radius:999px;padding:4px 14px;box-shadow:0 2px 8px rgba(12,95,138,.25)}
+.card.bday-today{border:2px solid var(--gold)}
+.card.bday-today .countdown{background:var(--gold);color:#3A2A00}
+.card .bday-foot{grid-template-columns:1fr auto;font-size:13px}
+.bday-foot .bdate{font-weight:700;color:var(--ink);white-space:nowrap}
+.bday-foot .turn{font-weight:700;color:var(--sky-deep);white-space:nowrap}
+.ml .pic img,.cal-chip .pic img{object-position:center top}
+.cal-head{display:flex;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+.cal-head h2{font-size:20px;font-weight:800;margin:0 auto 0 0}
+.cal-head button{cursor:pointer;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:6px 14px;min-height:40px;font-weight:500}
+.cal-head button:hover{border-color:var(--sky)}
+.cal{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px}
+.dow{font-size:12px;font-weight:700;color:var(--muted);text-align:center;padding:2px 0}
+.dow.sun,.day.sun .dn{color:#D9547A}
+.dow.sat,.day.sat .dn{color:var(--sky)}
+.day{min-height:108px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:6px;display:flex;flex-direction:column;gap:4px;min-width:0}
+.day.empty{background:transparent;border-color:transparent}
+.day.is-today{border:2px solid var(--sky);background:var(--sky-soft)}
+.dn{font-family:var(--num);font-weight:700;font-size:14px;line-height:1.2}
+.cal-chip{display:flex;align-items:center;gap:6px;width:100%;min-width:0;background:var(--sky-soft);border:none;border-radius:999px;padding:2px 8px 2px 2px;
+  cursor:pointer;font-size:12px;font-weight:700;text-align:left}
+.cal-chip:hover{background:var(--line)}
+.day.is-today .cal-chip{background:var(--surface)}
+.cal-chip .pic{width:24px;height:24px;border-radius:50%}
+.cal-chip .initial{font-size:11px}
+.cal-chip .fit{flex:1}
+.month-title{font-size:15px;font-weight:700;color:var(--muted);margin:24px 0 10px}
+.month-list{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:8px}
+.ml{width:100%;display:flex;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:6px 12px 6px 6px;cursor:pointer;text-align:left}
+.ml:hover{border-color:var(--sky)}
+.ml .pic{width:36px;height:44px;border-radius:10px}
+.ml .initial{font-size:16px}
+.ml .date{font-family:var(--num);font-weight:700;color:var(--sky-deep);min-width:2.6em}
+.ml .name{flex:1;min-width:0;font-weight:700}
+.ml small{color:var(--muted);white-space:nowrap}
+
+/* 詳細 */
+dialog{border:none;padding:0;border-radius:26px;background:var(--surface);color:var(--ink);width:min(1040px,calc(100vw - 24px));
+  max-height:calc(100vh - 24px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px))}
+dialog::backdrop{background:rgba(6,30,45,.55);backdrop-filter:blur(3px)}
+.d-wrap{display:grid;grid-template-columns:44% minmax(0,1fr)}
+.d-visual{background:var(--hero);padding:24px}
+.d-visual .pic{position:sticky;top:24px;width:100%;aspect-ratio:3/4;border-radius:22px;border:3px solid rgba(255,255,255,.75);background:rgba(255,255,255,.18)}
+.d-visual .pic img{object-position:center top}
+.d-visual .initial{font-size:clamp(80px,12vw,140px);color:#fff}
+.d-main{min-width:0}
+.d-head{padding:26px 24px 0}
+.d-head .tags{display:flex;gap:6px;flex-wrap:wrap}
+.d-no{font-family:var(--num);font-weight:800;font-size:30px;line-height:1;margin:12px 0 6px;color:var(--sky-deep);letter-spacing:.02em}
+.d-head h2{margin:0;font-weight:800;font-size:32px;line-height:1.25}
+.d-head .yomi{color:var(--muted);font-size:14px}
+.hito{margin:16px 24px 0;background:var(--sky-soft);color:var(--sky-deep);border-radius:16px;padding:10px 16px;font-weight:700;position:relative}
+.hito::before{content:"";position:absolute;top:-8px;left:28px;border:8px solid transparent;border-top:0;border-bottom-color:var(--sky-soft)}
+.d-body{display:grid;grid-template-columns:minmax(190px,240px) 1fr;gap:18px;padding:20px 24px}
+.facts small{display:block;color:var(--sky-deep);font-size:12px;font-weight:700}
+@media (max-width:900px){.d-body{grid-template-columns:1fr}.radar{max-width:300px}}
 .radar svg{width:100%;height:auto;display:block}
-.radar text{font-family:var(--body);font-size:12px;fill:var(--muted)}
+.radar text{font-family:var(--font);font-size:12px;fill:var(--muted)}
 .facts{margin:0;display:grid;grid-template-columns:auto 1fr;gap:6px 16px;align-content:start}
 .facts dt{color:var(--muted);font-size:13px}
-.facts dd{margin:0;font-variant-numeric:tabular-nums;font-weight:500}
-.total{grid-column:1/-1;margin-top:8px;padding:12px 14px;border-radius:10px;background:var(--mist);display:flex;justify-content:space-between;align-items:baseline;gap:8px}
-.total b{font-family:var(--display);font-weight:400;font-size:28px;color:var(--pine)}
-.total span{font-size:13px;color:var(--muted)}
-.sheet-foot{display:flex;justify-content:space-between;gap:8px;padding:0 24px 20px}
-.sheet-foot button{font:inherit;cursor:pointer;background:transparent;color:var(--ink);border:1.5px solid var(--line);border-radius:8px;padding:8px 14px;min-height:42px}
-.sheet-foot button:hover{border-color:var(--pine-soft)}
-.sheet-foot .close{margin-left:auto;background:var(--pine);border-color:var(--pine);color:var(--paper)}
-.avatar{width:48px;height:48px;border-radius:50%;overflow:hidden;background:var(--mist);display:grid;place-items:center;font-family:var(--display);font-size:20px;color:var(--pine);flex:none}
-.avatar img,.portrait img{width:100%;height:100%;object-fit:cover;display:block}
-.entry .line{grid-column:1/-1;font-size:13px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.sheet-head{padding-bottom:28px;align-items:center}
-.portrait{width:112px;height:112px;border-radius:14px;overflow:hidden;background:rgba(255,255,255,.14);display:grid;place-items:center;font-family:var(--display);font-size:48px;flex:none;border:2px solid var(--bolt)}
-.hitokoto{margin:-16px 24px 0;position:relative;background:var(--bolt);color:#16201B;border-radius:12px;padding:10px 16px;font-weight:700}
-.prof{padding:0 24px 20px;display:grid;gap:14px}
-.prof h3{margin:0 0 4px;font-size:13px;color:var(--muted);font-weight:500}
+.facts dd{margin:0;font-weight:500}
+.sec{padding:0 24px 20px}
+.sec h3{margin:0 0 8px;font-size:14px;color:var(--muted);font-weight:700}
+.ranks{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+.ranks div{background:var(--sky-soft);border-radius:14px;padding:10px 12px}
+.ranks span{display:block;font-size:12px;color:var(--muted)}
+.ranks b{font-family:var(--num);font-weight:700;font-size:18px}
+.ranks em{font-style:normal;font-family:var(--num);font-weight:700;color:var(--sky-deep);margin-left:6px}
+.ranks .top em{color:var(--gold)}
 .prof p{margin:0;white-space:pre-wrap}
-.prof p.blank{color:var(--muted)}
-.likes{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.likes>div{border:1.5px solid var(--line);border-radius:10px;padding:10px 14px}
-.likes .like{border-color:var(--pine-soft)}
-@media (max-width:620px){.likes{grid-template-columns:1fr}.portrait{width:84px;height:84px;font-size:36px}}
-@media (prefers-reduced-motion:no-preference){dialog[open]{animation:pop .18s ease-out}@keyframes pop{from{transform:translateY(8px);opacity:0}}}
+.prof .blank{color:var(--muted)}
+.prof .desc{margin-bottom:12px}
+.likes{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.likes>div{border:1px solid var(--line);border-radius:14px;padding:10px 14px}
+.d-foot{display:flex;gap:8px;padding:0 24px 22px}
+.d-foot button{cursor:pointer;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:9px 16px;min-height:44px;font-weight:500}
+.d-foot button:hover{border-color:var(--sky)}
+.d-foot .close{margin-left:auto;background:var(--sky);border-color:var(--sky);color:var(--on-sky);font-weight:700}
+@media (max-width:620px){
+  .controls{position:static}
+  .d-no{font-size:26px}
+  .d-head h2{font-size:26px}
+  .d-head{padding:20px 20px 0}
+  .day{min-height:66px;padding:4px;border-radius:10px}
+  .cal{gap:4px}
+  .cal-chip{width:auto;padding:0;background:none}
+  .cal-chip .fit{display:none}
+  .cal-chip .pic{width:26px;height:26px}
+  .dn{font-size:12px}
+  .likes{grid-template-columns:1fr}
+  .grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+  .card{border-radius:20px}
+  .card .body{padding:10px 12px 12px}
+  .card .name{font-size:16px}
+  .card .initial{font-size:56px}
+  .card .pic{aspect-ratio:2/3}
+  .card .foot{grid-template-columns:1fr auto}
+  .card .flabel{grid-column:1/-1}
+  .gens{grid-template-columns:1fr}
+}
+@media (max-width:720px){
+  .d-wrap{grid-template-columns:1fr}
+  .d-visual{padding:18px}
+  .d-visual .pic{position:static;width:min(100%,300px);margin:0 auto}
+}
+@media (prefers-reduced-motion:no-preference){dialog[open]{animation:pop .2s ease-out}@keyframes pop{from{transform:translateY(10px) scale(.98);opacity:0}}}
 </style>
 </head>
 <body>
 <header class="hero"><div class="wrap">
-  <h1>松電キャラクターズ図鑑<span class="bolt" aria-hidden="true"></span></h1>
+  <h1>松電キャラクターズ図鑑</h1>
   <p id="lead">最新のデータを読み込んでいます。</p>
+  <div class="stats" id="heroStats" hidden></div>
 </div></header>
 
 <div class="controls"><div class="wrap">
+  <div class="seg" role="group" aria-label="表示切り替え">
+    <button type="button" data-mode="cards" aria-pressed="true">図鑑</button>
+    <button type="button" data-mode="rank" aria-pressed="false">ランキング</button>
+    <button type="button" data-mode="gen" aria-pressed="false">期データ</button>
+    <button type="button" data-mode="bday" aria-pressed="false">誕生日</button>
+  </div>
   <input id="q" type="search" placeholder="名前・よみ・所属などで探す" aria-label="名前・よみ・所属などで探す">
   <select id="ki" aria-label="期で絞り込む"><option value="">すべての期</option></select>
-  <select id="sort" aria-label="並び順">
-    <option value="no">番号順</option>
-    <option value="total">合計能力値が高い順</option>
-    <option value="sum5">5ステ計が高い順</option>
-    <option value="iq">IQが高い順</option>
-    <option value="h">身長が高い順</option>
-    <option value="age">年齢が若い順</option>
-    <option value="bday">誕生日順（1月から）</option>
+  <select id="team" aria-label="所属で絞り込む"><option value="">すべての所属</option></select>
+  <select id="sort" aria-label="並び順"></select>
+  <select id="genSort" aria-label="期の並び順" hidden>
+    <option value="ki">期順</option>
+    <option value="avg">平均合計能力値が高い順</option>
+    <option value="count">人数が多い順</option>
   </select>
   <span class="count" id="count" aria-live="polite"></span>
-</div></div>
+</div>
+<div class="wrap"><div class="chips" id="chips" role="group" aria-label="ランキング項目" hidden></div></div>
+</div>
 
 <main><div class="wrap">
   <div class="status" id="status" role="status"><p id="statusMsg">データを読み込んでいます…</p><button id="retry" type="button" hidden>もう一度読み込む</button></div>
   <ul class="grid" id="grid"></ul>
-  <p class="empty" id="empty" hidden>条件に合うキャラクターがいません。検索語や期の絞り込みを変えてください。</p>
+  <ol class="ranking" id="ranking" hidden></ol>
+  <ul class="gens" id="gens" hidden></ul>
+  <section id="bday" hidden>
+    <h2 class="sec-title">もうすぐ誕生日</h2>
+    <ol class="grid upcoming" id="upcoming"></ol>
+    <div class="cal-head">
+      <h2 id="calTitle"></h2>
+      <button type="button" id="calPrev">前の月</button>
+      <button type="button" id="calToday">今月</button>
+      <button type="button" id="calNext">次の月</button>
+    </div>
+    <div class="cal" id="cal"></div>
+    <h3 class="month-title" id="monthTitle"></h3>
+    <ol class="month-list" id="monthList"></ol>
+  </section>
+  <p class="empty" id="empty" hidden>条件に合うキャラクターがいません。検索語や絞り込みを変えてください。</p>
 </div></main>
 
 <dialog id="dlg" aria-labelledby="dName">
-  <div class="sheet-head">
-    <div class="portrait" id="dImg"></div>
-    <div><div class="sub" id="dKi"></div><h2 id="dName"></h2><div class="sub" id="dYomi"></div></div>
-  </div>
-  <p class="hitokoto" id="dHito" hidden></p>
-  <div class="sheet-body">
-    <div class="radar" id="dRadar"></div>
-    <dl class="facts" id="dFacts"></dl>
-  </div>
-  <div class="prof" id="dProf"></div>
-  <div class="sheet-foot">
-    <button id="prev" type="button">前へ</button>
-    <button id="next" type="button">次へ</button>
-    <button class="close" id="close" type="button">閉じる</button>
+  <div class="d-wrap">
+    <div class="d-visual"><div class="pic" id="dImg"></div></div>
+    <div class="d-main">
+      <div class="d-head">
+        <div class="tags" id="dTags"></div>
+        <div class="d-no" id="dNo"></div>
+        <h2 class="fit" id="dName"></h2>
+        <div class="yomi fit" id="dYomi"></div>
+      </div>
+      <p class="hito" id="dHito" hidden></p>
+      <div class="d-body">
+        <div class="radar" id="dRadar"></div>
+        <dl class="facts" id="dFacts"></dl>
+      </div>
+      <div class="sec"><h3>ランキング</h3><div class="ranks" id="dRanks"></div></div>
+      <div class="sec prof" id="dProf"></div>
+      <div class="d-foot">
+        <button id="prev" type="button">前へ</button>
+        <button id="next" type="button">次へ</button>
+        <button class="close" id="close" type="button">閉じる</button>
+      </div>
+    </div>
   </div>
 </dialog>
+
 <script>
 // ▼ Apps Script を「ウェブアプリ」としてデプロイしたときのURL（最後が /exec）に置き換えてください
-const API_URL = "https://script.google.com/macros/s/AKfycbzWvAklPIOzrBTwHUvLd0RS-2hI2x1bdgr4EgeiTBAZEAxSQBlVeEfjDj8n9dCM-KrXFA/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbzEVLNEROGdg4PF4apypmoWanu5PnxeMlo0_E_2cr0DfVLjx1kzZTzoOc390A8R9BSquQ/exec";
 
-const STATS = ["体力","パワー","ガード","コミュ力","学力"];
+const STAT_NAMES = ["体力","パワー","ガード","コミュ力","学力"];
+const METRICS = [
+  { key:"total", label:"合計能力値", get:c => c.total, fmt:v => v.toFixed(2) },
+  { key:"sum5",  label:"5ステ計",    get:c => c.sum5,  fmt:v => v.toLocaleString() },
+  ...STAT_NAMES.map((label, i) => ({ key:"s" + i, label, get:c => c.stats[i], fmt:v => String(v) })),
+  { key:"iq",    label:"IQ",         get:c => c.iq,    fmt:v => String(v) }
+];
+const M = Object.fromEntries(METRICS.map(m => [m.key, m]));
+
 const $ = id => document.getElementById(id);
 const esc = s => String(s).replace(/[&<>"]/g, ch => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[ch]));
-const initial = c => (c.name.split(" ")[1] || c.name)[0] || "?";
-const face = c => c.image
-  ? `<span class="avatar"><img src="${esc(c.image)}" alt="" loading="lazy" data-fallback="${esc(initial(c))}"></span>`
-  : `<span class="avatar" aria-hidden="true">${esc(initial(c))}</span>`;
+const initial = c => Array.from(c.name.split(" ")[1] || c.name)[0] || "?";
+const pic = c => c.image
+  ? `<img src="${esc(c.image)}" alt="" loading="lazy" data-fallback="${esc(initial(c))}">`
+  : `<span class="initial" aria-hidden="true">${esc(initial(c))}</span>`;
 const txt = s => s ? `<p>${esc(s)}</p>` : `<p class="blank">未登録</p>`;
 
-let chars = [], view = [], maxTotal = 1, cur = 0;
+let chars = [], gens = [], view = [], maxOf = {}, radarMax = 2000, cur = 0, mode = "cards", rankKey = "total";
 
+/* 並び順 */
+const sorters = {
+  no:   (a,b) => a.no - b.no,
+  team: (a,b) => (!a.team - !b.team) || a.team.localeCompare(b.team, "ja") || a.no - b.no,
+  ...Object.fromEntries(METRICS.map(m => [m.key, (a,b) => m.get(b) - m.get(a) || a.no - b.no])),
+  h:    (a,b) => b.height - a.height || a.no - b.no,
+  age:  (a,b) => a.age - b.age || a.no - b.no,
+  bday: (a,b) => a.month - b.month || a.day - b.day || a.no - b.no
+};
+$("sort").innerHTML = [
+  ["no","番号順"], ["team","所属順"],
+  ...METRICS.map(m => [m.key, `${m.label}が高い順`]),
+  ["h","身長が高い順"], ["age","年齢が若い順"], ["bday","誕生日順（1月から）"]
+].map(([v, t]) => `<option value="${v}">${t}</option>`).join("");
+$("chips").innerHTML = METRICS.map(m =>
+  `<button type="button" data-key="${m.key}" aria-pressed="${m.key === rankKey}">${m.label}</button>`).join("");
+
+/* 読み込み */
 function setStatus(msg, isError){
   $("status").hidden = !msg;
   $("statusMsg").textContent = msg || "";
   $("retry").hidden = !isError;
 }
-
 async function load(){
   setStatus("データを読み込んでいます…");
   try {
@@ -175,7 +403,7 @@ async function load(){
     if (!res.ok) throw new Error(`データを取得できませんでした（HTTP ${res.status}）。少し待ってから再読み込みしてください。`);
     const json = await res.json();
     if (json.error) throw new Error("スプレッドシートを読み取れませんでした: " + json.error);
-    build(json.characters || []);
+    build(json.characters || [], json.generations || []);
     setStatus("");
   } catch (e) {
     setStatus(e instanceof SyntaxError || e instanceof TypeError
@@ -184,73 +412,269 @@ async function load(){
   }
 }
 
-function build(list){
+function build(list, genList){
   const today = new Date();
   chars = list.map(c => {
     let age = today.getFullYear() - c.year;
     if (today.getMonth() + 1 < c.month || (today.getMonth() + 1 === c.month && today.getDate() < c.day)) age--;
-    return { ...c, age, sum5: c.stats.reduce((a, b) => a + b, 0) };
+    const next = nextBirthday(c);
+    return { ...c, age, sum5: c.stats.reduce((a, b) => a + b, 0), ranks: {},
+      nextBday: next, daysUntil: next ? Math.round((next - todayMidnight()) / 86400000) : null, turning: next ? next.getFullYear() - c.year : null };
   });
-  const byTotal = [...chars].sort((a, b) => b.total - a.total);
-  byTotal.forEach((c, i) => c.rank = i + 1);
-  maxTotal = byTotal.length ? byTotal[0].total || 1 : 1;
+  // 各項目の順位（同じ値は同順位）
+  METRICS.forEach(m => {
+    const vals = chars.map(m.get).sort((a, b) => b - a);
+    maxOf[m.key] = vals[0] || 1;
+    chars.forEach(c => c.ranks[m.key] = vals.indexOf(m.get(c)) + 1);
+  });
+  // レーダーチャートの外周＝全キャラの最大ステータス（500単位で切り上げ）
+  radarMax = Math.max(2000, Math.ceil(Math.max(0, ...chars.flatMap(c => c.stats)) / 500) * 500);
   const kis = [...new Set(chars.map(c => c.ki))].sort((a, b) => a - b);
-  $("lead").textContent = `${kis.length ? kis[kis.length-1] : 0}期・${chars.length}人のプロフィールと能力値。気になるキャラクターを選ぶと詳しいデータが見られます。`;
-  const keep = $("ki").value;
+  const teams = [...new Set(chars.map(c => c.team).filter(Boolean))].sort((a, b) => a.localeCompare(b, "ja"));
+  buildGens(kis, genList);
+  $("lead").textContent = "プロフィールと能力値をまとめたキャラクター図鑑。気になるキャラクターを選ぶと詳しいデータが見られます。";
+  $("heroStats").innerHTML = `<div><b>${chars.length}</b><span>キャラクター</span></div><div><b>${kis.length ? kis[kis.length-1] : 0}</b><span>期</span></div><div><b>${teams.length}</b><span>所属</span></div>`;
+  $("heroStats").hidden = false;
+  const keepKi = $("ki").value, keepTeam = $("team").value;
   $("ki").innerHTML = `<option value="">すべての期</option>` +
     kis.map(k => `<option value="${k}">${k}期生（${chars.filter(c => c.ki === k).length}人）</option>`).join("");
-  if (kis.includes(+keep)) $("ki").value = keep;
+  $("team").innerHTML = `<option value="">すべての所属</option>` +
+    teams.map(t => `<option value="${esc(t)}">${esc(t)}（${chars.filter(c => c.team === t).length}人）</option>`).join("") +
+    `<option value="__none">所属なし（${chars.filter(c => !c.team).length}人）</option>`;
+  if (kis.includes(+keepKi)) $("ki").value = keepKi;
+  if ([...$("team").options].some(o => o.value === keepTeam)) $("team").value = keepTeam;
   render();
 }
 
-const sorters = {
-  no: (a,b) => a.no - b.no, total: (a,b) => b.total - a.total, sum5: (a,b) => b.sum5 - a.sum5,
-  iq: (a,b) => b.iq - a.iq, h: (a,b) => b.height - a.height, age: (a,b) => a.age - b.age || a.no - b.no,
-  bday: (a,b) => a.month - b.month || a.day - b.day
-};
+/* 誕生日 */
+const WD = ["日","月","火","水","木","金","土"];
+const todayMidnight = () => { const t = new Date(); t.setHours(0, 0, 0, 0); return t; };
+const isLeap = y => (y % 4 === 0 && y % 100 !== 0) || y % 400 === 0;
+// 2月29日生まれは、うるう年以外は2月28日に表示
+const bdayIn = (y, c) => (c.month === 2 && c.day === 29 && !isLeap(y)) ? new Date(y, 1, 28) : new Date(y, c.month - 1, c.day);
+function nextBirthday(c){
+  if (!c.month || !c.day) return null;
+  const t = todayMidnight();
+  let d = bdayIn(t.getFullYear(), c);
+  if (d < t) d = bdayIn(t.getFullYear() + 1, c);
+  return d;
+}
+let calY = new Date().getFullYear(), calM = new Date().getMonth(), ctx = { up: [], month: [] };
 
-function render(){
-  const q = $("q").value.trim().replace(/\s/g, "");
-  const ki = +$("ki").value;
-  view = chars.filter(c => (!ki || c.ki === ki) &&
-      (!q || [c.name, c.yomi, c.team, c.hitokoto, c.description, c.likes, c.dislikes].join("").replace(/\s/g, "").includes(q)))
-    .sort(sorters[$("sort").value]);
-  $("grid").innerHTML = view.map((c, i) => `
-    <li><button class="entry" type="button" data-i="${i}">
-      <span class="no">${c.no}</span>
-      ${face(c)}
-      <span class="who"><span class="name">${esc(c.name)}</span><br><span class="yomi">${esc(c.yomi)}</span></span>
-      ${c.hitokoto ? `<span class="line">「${esc(c.hitokoto)}」</span>` : ""}
-      <span class="meta"><span class="ki">${c.ki}期生</span>${c.team ? `<span class="team">${esc(c.team)}</span>` : ""}
-        <span class="bar" aria-hidden="true"><i style="width:${(c.total/maxTotal*100).toFixed(1)}%"></i></span>
-        <span class="score">${c.total.toFixed(2)}</span></span>
-    </button></li>`).join("");
-  $("count").textContent = chars.length ? `${view.length}人を表示中` : "";
-  $("empty").hidden = !chars.length || view.length > 0;
+function renderBday(){
+  // もうすぐ誕生日：30日以内（少ないときは近い順に8人まで）
+  const sorted = chars.filter(c => c.nextBday).sort((a, b) => a.daysUntil - b.daysUntil || a.no - b.no);
+  let up = sorted.filter(c => c.daysUntil <= 30);
+  if (up.length < 8) up = sorted.slice(0, 8);
+  ctx.up = up.slice(0, 16);
+  $("upcoming").innerHTML = ctx.up.map((c, i) => {
+    const d = c.daysUntil, n = c.nextBday;
+    return `<li><button class="card${d === 0 ? " bday-today" : ""}" type="button" data-ctx="up" data-i="${i}">
+      <span class="pic">${pic(c)}<span class="badge">No.${c.no}</span><span class="countdown">${d === 0 ? "今日！" : d === 1 ? "明日" : `あと${d}日`}</span></span>
+      <span class="body">
+        <span class="info">
+          <span class="tags"><span class="tag ki">${c.ki}期生</span>${c.team ? `<span class="tag team">${esc(c.team)}</span>` : ""}${c.isLeader ? `<span class="tag lead">リーダー</span>` : ""}</span>
+          <span class="name fit">${esc(c.name)}</span>
+          <span class="yomi fit">${esc(c.yomi)}</span>
+        </span>
+        <span class="foot bday-foot"><span class="bdate">${n.getMonth() + 1}月${n.getDate()}日（${WD[n.getDay()]}）</span><span class="turn">${d === 0 ? `今日で${c.turning}歳` : `${c.turning}歳に`}</span></span>
+      </span>
+    </button></li>`;
+  }).join("");
+
+  // カレンダー
+  $("calTitle").textContent = `${calY}年${calM + 1}月`;
+  const t = todayMidnight();
+  const days = new Date(calY, calM + 1, 0).getDate();
+  const first = new Date(calY, calM, 1).getDay();
+  const inMonth = chars.filter(c => c.month).map(c => ({ c, d: bdayIn(calY, c) }))
+    .filter(x => x.d.getMonth() === calM).sort((a, b) => a.d - b.d || a.c.no - b.c.no);
+  ctx.month = inMonth.map(x => x.c);
+  let html = WD.map((w, i) => `<div class="dow${i === 0 ? " sun" : i === 6 ? " sat" : ""}">${w}</div>`).join("");
+  for (let i = 0; i < first; i++) html += `<div class="day empty"></div>`;
+  for (let day = 1; day <= days; day++) {
+    const dow = (first + day - 1) % 7;
+    const isToday = calY === t.getFullYear() && calM === t.getMonth() && day === t.getDate();
+    const list = inMonth.map((x, i) => ({ ...x, i })).filter(x => x.d.getDate() === day);
+    html += `<div class="day${dow === 0 ? " sun" : dow === 6 ? " sat" : ""}${isToday ? " is-today" : ""}">
+      <span class="dn">${day}</span>
+      ${list.map(x => `<button class="cal-chip" type="button" data-ctx="month" data-i="${x.i}" title="${esc(x.c.name)}"><span class="pic">${pic(x.c)}</span><span class="fit">${esc(x.c.name)}</span></button>`).join("")}
+    </div>`;
+  }
+  $("cal").innerHTML = html;
+  $("monthTitle").textContent = `${calM + 1}月に誕生日を迎えるキャラ（${inMonth.length}人）`;
+  $("monthList").innerHTML = inMonth.map((x, i) => `<li><button class="ml" type="button" data-ctx="month" data-i="${i}">
+      <span class="pic">${pic(x.c)}</span><span class="date">${x.d.getDate()}日</span>
+      <span class="name fit">${esc(x.c.name)}</span><small>${calY - x.c.year}歳になる年</small></button></li>`).join("")
+    || `<li class="empty">この月に誕生日のキャラはいません。</li>`;
+  const todayCount = chars.filter(c => c.daysUntil === 0).length;
+  $("count").textContent = todayCount ? `今日は${todayCount}人の誕生日` : "";
+  requestAnimationFrame(() => fitAll($("bday")));
 }
 
+/* 期ごとのデータ */
+const norm = s => String(s || "").replace(/[\s　]/g, "");
+function buildGens(kis, genList){
+  const info = new Map(genList.map(g => [g.ki, g]));
+  gens = kis.map(k => {
+    const ms = chars.filter(c => c.ki === k);
+    const g = info.get(k) || {};
+    const avg = f => ms.reduce((a, c) => a + f(c), 0) / ms.length;
+    const leader = g.leader ? (ms.find(c => norm(c.name) === norm(g.leader)) || chars.find(c => norm(c.name) === norm(g.leader))) : null;
+    if (leader) leader.isLeader = true;
+    ms.forEach(c => c.genTeam = g.team || "");
+    return {
+      ki: k, team: g.team || "", leaderName: g.leader || "", leader, extra: g.extra || {}, count: ms.length,
+      avgTotal: avg(c => c.total), avgSum5: avg(c => c.sum5), avgStats: STAT_NAMES.map((_, i) => avg(c => c.stats[i])),
+      avgIq: avg(c => c.iq), avgHeight: avg(c => c.height), avgAge: avg(c => c.age),
+      top: ms.reduce((a, c) => c.total > a.total ? c : a, ms[0])
+    };
+  });
+  const order = [...gens].sort((a, b) => b.avgTotal - a.avgTotal);
+  gens.forEach(g => g.rank = order.indexOf(g) + 1);
+  gens.statMax = STAT_NAMES.map((_, i) => Math.max(...gens.map(g => g.avgStats[i])) || 1);
+}
+const fmt2 = v => v.toLocaleString("ja-JP", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const fmt1 = v => v.toLocaleString("ja-JP", { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+
+function genCard(g){
+  const L = g.leader;
+  const leader = L
+    ? `<button class="leader" type="button" data-char="${L.no}"><span class="pic">${pic(L)}</span><span class="who"><small>リーダー</small><b class="fit">${esc(L.name)}</b></span></button>`
+    : `<div class="leader"><span class="pic"><span class="initial">?</span></span><span class="who"><small>リーダー</small><b class="fit">${g.leaderName ? esc(g.leaderName) : "未設定"}</b></span></div>`;
+  return `<li><article class="gen">
+    <div class="gen-head">
+      <span class="gen-no">${g.ki}<small>期生</small></span>
+      <span class="gen-team fit${g.team ? "" : " unset"}">${g.team ? esc(g.team) : "愛称未設定"}</span>
+      <span class="gen-count">${g.count}人</span>
+    </div>
+    <div class="gen-body">
+      ${leader}
+      <div class="avg-total"><span>平均合計能力値</span><b>${fmt2(g.avgTotal)}</b><em>${gens.length}期中 ${g.rank}位</em></div>
+      <div class="avg-stats">${STAT_NAMES.map((n, i) =>
+        `<span class="lbl">平均${n}</span><span class="bar"><i style="width:${(g.avgStats[i] / gens.statMax[i] * 100).toFixed(1)}%"></i></span><span class="v">${Math.round(g.avgStats[i])}</span>`).join("")}</div>
+      <dl class="gen-facts">
+        <dt>平均5ステ計</dt><dd>${fmt1(g.avgSum5)}</dd>
+        <dt>平均IQ</dt><dd>${fmt1(g.avgIq)}</dd>
+        <dt>平均身長</dt><dd>${fmt1(g.avgHeight)} cm</dd>
+        <dt>平均年齢</dt><dd>${fmt1(g.avgAge)}歳</dd>
+        <dt>期内トップ</dt><dd><button class="link" type="button" data-char="${g.top.no}">${esc(g.top.name)}</button>（${g.top.total.toFixed(2)}）</dd>
+        ${Object.entries(g.extra).map(([k, v]) => `<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join("")}
+      </dl>
+    </div>
+    <div class="gen-foot"><button type="button" data-ki="${g.ki}">${g.ki}期生のメンバーを見る</button></div>
+  </article></li>`;
+}
+
+/* 表示 */
+function filtered(){
+  const q = $("q").value.trim().replace(/\s/g, "");
+  const ki = +$("ki").value, team = $("team").value;
+  return chars.filter(c =>
+    (!ki || c.ki === ki) &&
+    (!team || (team === "__none" ? !c.team : c.team === team)) &&
+    (!q || [c.name, c.yomi, c.team, c.hitokoto, c.description, c.likes, c.dislikes].join("").replace(/\s/g, "").includes(q)));
+}
+
+function render(){
+  const isRank = mode === "rank", isGen = mode === "gen", isBday = mode === "bday";
+  $("grid").hidden = mode !== "cards";
+  $("ranking").hidden = !isRank;
+  $("gens").hidden = !isGen;
+  $("bday").hidden = !isBday;
+  $("chips").hidden = !isRank;
+  $("sort").hidden = mode !== "cards";
+  $("genSort").hidden = !isGen;
+  ["q", "ki", "team"].forEach(id => $(id).hidden = isGen || isBday);
+
+  if (isBday) { $("empty").hidden = true; renderBday(); return; }
+
+  if (isGen) {
+    const key = $("genSort").value;
+    const list = [...gens].sort(key === "avg" ? (a, b) => b.avgTotal - a.avgTotal
+      : key === "count" ? (a, b) => b.count - a.count || a.ki - b.ki : (a, b) => a.ki - b.ki);
+    $("gens").innerHTML = list.map(genCard).join("");
+    $("count").textContent = gens.length ? `${gens.length}期を表示中` : "";
+    $("empty").hidden = true;
+    requestAnimationFrame(() => fitAll($("gens")));
+    return;
+  }
+  const list = filtered();
+
+  if (isRank) {
+    const m = M[rankKey];
+    view = list.sort(sorters[rankKey]);
+    $("ranking").innerHTML = view.map((c, i) => {
+      const r = c.ranks[rankKey];
+      return `<li><button class="row${r <= 3 ? " r" + r : ""}" type="button" data-i="${i}">
+        <span class="place">${r}</span>
+        <span class="pic">${pic(c)}</span>
+        <span class="info"><span class="name fit">${esc(c.name)}</span><span class="sub fit">${c.ki}期生${c.team ? "　" + esc(c.team) : ""}</span></span>
+        <span class="val"><span class="bar"><i style="width:${(Math.max(0, m.get(c)) / maxOf[rankKey] * 100).toFixed(1)}%"></i></span><b>${m.fmt(m.get(c))}</b></span>
+      </button></li>`;
+    }).join("");
+  } else {
+    const sortKey = $("sort").value;
+    const m = M[sortKey] || M.total;
+    view = list.sort(sorters[sortKey]);
+    $("grid").innerHTML = view.map((c, i) => `
+      <li><button class="card" type="button" data-i="${i}">
+        <span class="pic">${pic(c)}<span class="badge">No.${c.no}</span></span>
+        <span class="body">
+          <span class="info">
+            <span class="tags"><span class="tag ki">${c.ki}期生</span>${c.team ? `<span class="tag team">${esc(c.team)}</span>` : ""}${c.isLeader ? `<span class="tag lead">リーダー</span>` : ""}</span>
+            <span class="name fit">${esc(c.name)}</span>
+            <span class="yomi fit">${esc(c.yomi)}</span>
+          </span>
+          <span class="foot"><span class="flabel">${m.label}</span><span class="score">${m.fmt(m.get(c))}</span><span class="rk">${c.ranks[m.key]}位</span>
+            <span class="bar"><i style="width:${(Math.max(0, m.get(c)) / maxOf[m.key] * 100).toFixed(1)}%"></i></span></span>
+        </span>
+      </button></li>`).join("");
+  }
+  $("count").textContent = chars.length ? `${view.length}人を表示中` : "";
+  $("empty").hidden = !chars.length || view.length > 0;
+  requestAnimationFrame(() => fitAll(isRank ? $("ranking") : $("grid")));
+}
+
+/* 長い名前は改行せず文字を小さくして1行に収める */
+function fit(el){
+  el.style.fontSize = "";
+  const base = parseFloat(getComputedStyle(el).fontSize);
+  let s = base;
+  const min = Math.max(10, base * 0.55);
+  while (el.scrollWidth > el.clientWidth + 1 && s > min) { s -= 0.5; el.style.fontSize = s + "px"; }
+}
+const fitAll = root => root.querySelectorAll(".fit").forEach(fit);
+let resizeTimer;
+addEventListener("resize", () => {
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(() => { fitAll(document); }, 150);
+});
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => fitAll(document));
+
 function radar(stats){
-  const S = 280, cx = S/2, cy = S/2 + 6, R = 100, MAX = 2000;
+  const S = 280, cx = S/2, cy = S/2 + 6, R = 100, MAX = radarMax;
   const pt = (i, r) => { const a = -Math.PI/2 + i*2*Math.PI/5; return [cx + r*Math.cos(a), cy + r*Math.sin(a)]; };
   const poly = r => [0,1,2,3,4].map(i => pt(i, r).join(",")).join(" ");
   let g = "";
   [0.25,0.5,0.75,1].forEach(k => g += `<polygon points="${poly(R*k)}" fill="none" stroke="var(--line)" stroke-width="1"/>`);
   [0,1,2,3,4].forEach(i => { const [x,y] = pt(i,R); g += `<line x1="${cx}" y1="${cy}" x2="${x}" y2="${y}" stroke="var(--line)"/>`; });
   const shape = stats.map((v,i) => pt(i, R*Math.max(0, Math.min(v,MAX))/MAX).join(",")).join(" ");
-  g += `<polygon points="${shape}" fill="var(--bolt)" fill-opacity=".55" stroke="var(--pine)" stroke-width="2" stroke-linejoin="round"/>`;
+  g += `<polygon points="${shape}" fill="var(--sky)" fill-opacity=".3" stroke="var(--sky)" stroke-width="2.5" stroke-linejoin="round"/>`;
   stats.forEach((v,i) => {
     const [x,y] = pt(i, R + 26);
-    g += `<text x="${x}" y="${y-4}" text-anchor="middle">${STATS[i]}</text><text x="${x}" y="${y+12}" text-anchor="middle" style="fill:var(--ink);font-weight:700">${v}</text>`;
+    g += `<text x="${x}" y="${y-4}" text-anchor="middle">${STAT_NAMES[i]}</text><text x="${x}" y="${y+12}" text-anchor="middle" style="fill:var(--ink);font-weight:700">${v}</text>`;
   });
-  return `<svg viewBox="0 0 ${S} ${S+8}" role="img" aria-label="能力値のレーダーチャート（最大2000）">${g}</svg>`;
+  return `<svg viewBox="0 0 ${S} ${S+8}" role="img" aria-label="能力値のレーダーチャート（最大${MAX}）">${g}</svg>`;
 }
 
 function show(i){
   if (!view.length) return;
   cur = (i + view.length) % view.length;
   const c = view[cur];
-  $("dImg").innerHTML = c.image ? `<img src="${esc(c.image)}" alt="${esc(c.name)}" data-fallback="${esc(initial(c))}">` : esc(initial(c));
-  $("dKi").textContent = `No.${c.no}　${c.ki}期生`;
+  $("dImg").innerHTML = c.image ? `<img src="${esc(c.image)}" alt="${esc(c.name)}" data-fallback="${esc(initial(c))}">` : `<span class="initial">${esc(initial(c))}</span>`;
+  $("dTags").innerHTML = `<span class="tag ki">${c.ki}期生${c.genTeam ? "「" + esc(c.genTeam) + "」" : ""}</span>${c.team ? `<span class="tag team">${esc(c.team)}</span>` : ""}${c.isLeader ? `<span class="tag lead">リーダー</span>` : ""}`;
+  $("dNo").textContent = `No.${c.no}`;
   $("dName").textContent = c.name;
   $("dYomi").textContent = c.yomi;
   $("dHito").hidden = !c.hitokoto;
@@ -258,28 +682,76 @@ function show(i){
   $("dRadar").innerHTML = radar(c.stats);
   $("dFacts").innerHTML = `
     <dt>所属</dt><dd>${c.team ? esc(c.team) : "なし"}</dd>
-    <dt>誕生日</dt><dd>${c.year}年${c.month}月${c.day}日（${c.age}歳）</dd>
+    <dt>誕生日</dt><dd>${c.year}年${c.month}月${c.day}日（${c.age}歳）${c.month ? `<small>${c.daysUntil === 0 ? "今日が誕生日！" : `次の誕生日まであと${c.daysUntil}日`}</small>` : ""}</dd>
     <dt>身長</dt><dd>${c.height} cm</dd>
     <dt>体重</dt><dd>${c.weight.toFixed(1)} kg</dd>
-    <dt>5ステ計</dt><dd>${c.sum5.toLocaleString()}</dd>
     <dt>IQ</dt><dd>${c.iq}</dd>
-    <dt>追加日</dt><dd>${esc(c.added)}</dd>
-    <div class="total"><div><span>合計能力値</span><br><b>${c.total.toFixed(2)}</b></div><span>${chars.length}人中 ${c.rank}位</span></div>`;
+    <dt>追加日</dt><dd>${esc(c.added)}</dd>`;
+  $("dRanks").innerHTML = METRICS.map(m =>
+    `<div class="${c.ranks[m.key] <= 3 ? "top" : ""}"><span>${m.label}</span><b>${m.fmt(m.get(c))}</b><em>${c.ranks[m.key]}位</em></div>`).join("");
   $("dProf").innerHTML = `
-    <div><h3>キャラクター説明</h3>${txt(c.description)}</div>
-    <div class="likes"><div class="like"><h3>好きなこと</h3>${txt(c.likes)}</div><div><h3>嫌いなこと</h3>${txt(c.dislikes)}</div></div>`;
+    <div class="desc"><h3>キャラクター説明</h3>${txt(c.description)}</div>
+    <div class="likes"><div><h3>好きなこと</h3>${txt(c.likes)}</div><div><h3>嫌いなこと</h3>${txt(c.dislikes)}</div></div>`;
   $("prev").disabled = $("next").disabled = view.length < 2;
+  requestAnimationFrame(() => fitAll($("dlg")));
 }
 
 // 画像が読み込めなかったときは名前の1文字目を表示
 document.addEventListener("error", e => {
   const img = e.target;
-  if (img.tagName === "IMG" && img.dataset.fallback !== undefined) img.parentNode.textContent = img.dataset.fallback;
+  if (img.tagName === "IMG" && img.dataset.fallback !== undefined) {
+    const s = document.createElement("span");
+    s.className = "initial"; s.textContent = img.dataset.fallback;
+    img.replaceWith(s);
+  }
 }, true);
 
-$("grid").addEventListener("click", e => {
-  const b = e.target.closest(".entry"); if (!b) return;
-  show(+b.dataset.i); if (!$("dlg").open) $("dlg").showModal();
+const openAt = e => {
+  const b = e.target.closest("[data-i]"); if (!b) return;
+  if (!$("dlg").open) $("dlg").showModal();
+  show(+b.dataset.i);
+};
+$("grid").addEventListener("click", openAt);
+$("ranking").addEventListener("click", openAt);
+function setMode(m){
+  mode = m;
+  document.querySelectorAll(".seg button").forEach(x => x.setAttribute("aria-pressed", x.dataset.mode === m));
+  render();
+}
+document.querySelector(".seg").addEventListener("click", e => {
+  const b = e.target.closest("button[data-mode]"); if (b) setMode(b.dataset.mode);
+});
+$("bday").addEventListener("click", e => {
+  const b = e.target.closest("[data-ctx]"); if (!b) return;
+  view = ctx[b.dataset.ctx];
+  if (!$("dlg").open) $("dlg").showModal();
+  show(+b.dataset.i);
+});
+const moveMonth = n => { const d = new Date(calY, calM + n, 1); calY = d.getFullYear(); calM = d.getMonth(); renderBday(); };
+$("calPrev").onclick = () => moveMonth(-1);
+$("calNext").onclick = () => moveMonth(1);
+$("calToday").onclick = () => { calY = new Date().getFullYear(); calM = new Date().getMonth(); renderBday(); };
+$("gens").addEventListener("click", e => {
+  const ch = e.target.closest("[data-char]");
+  if (ch) {
+    const c = chars.find(x => x.no === +ch.dataset.char); if (!c) return;
+    view = chars.filter(x => x.ki === c.ki).sort(sorters.no);
+    if (!$("dlg").open) $("dlg").showModal();
+    show(view.indexOf(c));
+    return;
+  }
+  const kb = e.target.closest("[data-ki]");
+  if (kb) {
+    $("ki").value = kb.dataset.ki; $("team").value = ""; $("q").value = "";
+    setMode("cards");
+    document.querySelector("main").scrollIntoView({ behavior: "smooth" });
+  }
+});
+$("chips").addEventListener("click", e => {
+  const b = e.target.closest("button[data-key]"); if (!b) return;
+  rankKey = b.dataset.key;
+  $("chips").querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", x === b));
+  render();
 });
 $("prev").onclick = () => show(cur - 1);
 $("next").onclick = () => show(cur + 1);
@@ -290,7 +762,7 @@ $("dlg").addEventListener("keydown", e => {
   if (e.key === "ArrowLeft") show(cur - 1);
   if (e.key === "ArrowRight") show(cur + 1);
 });
-["q","ki","sort"].forEach(id => $(id).addEventListener("input", render));
+["q","ki","team","sort","genSort"].forEach(id => $(id).addEventListener("input", render));
 load();
 </script>
 </body>
