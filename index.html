@@ -215,6 +215,7 @@ dialog::backdrop{background:rgba(6,30,45,.55);backdrop-filter:blur(3px)}
 .d-head{padding:26px 24px 0}
 .d-head .tags{display:flex;gap:6px;flex-wrap:wrap}
 .d-no{font-family:var(--num);font-weight:800;font-size:30px;line-height:1;margin:12px 0 6px;color:var(--sky-deep);letter-spacing:.02em}
+#dName:focus{outline:none}
 .d-head h2{margin:0;font-weight:800;font-size:32px;line-height:1.25}
 .d-head .yomi{color:var(--muted);font-size:14px}
 .hito{margin:16px 24px 0;background:var(--sky-soft);color:var(--sky-deep);border-radius:16px;padding:10px 16px;font-weight:700;position:relative}
@@ -330,7 +331,7 @@ dialog::backdrop{background:rgba(6,30,45,.55);backdrop-filter:blur(3px)}
       <div class="d-head">
         <div class="tags" id="dTags"></div>
         <div class="d-no" id="dNo"></div>
-        <h2 class="fit" id="dName"></h2>
+        <h2 class="fit" id="dName" tabindex="-1" autofocus></h2>
         <div class="yomi fit" id="dYomi"></div>
       </div>
       <p class="hito" id="dHito" hidden></p>
@@ -358,7 +359,8 @@ const METRICS = [
   { key:"total", label:"合計能力値", get:c => c.total, fmt:v => v.toFixed(2) },
   { key:"sum5",  label:"5ステ計",    get:c => c.sum5,  fmt:v => v.toLocaleString() },
   ...STAT_NAMES.map((label, i) => ({ key:"s" + i, label, get:c => c.stats[i], fmt:v => String(v) })),
-  { key:"iq",    label:"IQ",         get:c => c.iq,    fmt:v => String(v) }
+  { key:"iq",    label:"IQ",         get:c => c.iq,    fmt:v => String(v) },
+  { key:"h",     label:"身長",       get:c => c.height, fmt:v => `${v} cm` }
 ];
 const M = Object.fromEntries(METRICS.map(m => [m.key, m]));
 
@@ -377,14 +379,13 @@ const sorters = {
   no:   (a,b) => a.no - b.no,
   team: (a,b) => (!a.team - !b.team) || a.team.localeCompare(b.team, "ja") || a.no - b.no,
   ...Object.fromEntries(METRICS.map(m => [m.key, (a,b) => m.get(b) - m.get(a) || a.no - b.no])),
-  h:    (a,b) => b.height - a.height || a.no - b.no,
   age:  (a,b) => a.age - b.age || a.no - b.no,
   bday: (a,b) => a.month - b.month || a.day - b.day || a.no - b.no
 };
 $("sort").innerHTML = [
   ["no","番号順"], ["team","所属順"],
   ...METRICS.map(m => [m.key, `${m.label}が高い順`]),
-  ["h","身長が高い順"], ["age","年齢が若い順"], ["bday","誕生日順（1月から）"]
+  ["age","年齢が若い順"], ["bday","誕生日順（1月から）"]
 ].map(([v, t]) => `<option value="${v}">${t}</option>`).join("");
 $("chips").innerHTML = METRICS.map(m =>
   `<button type="button" data-key="${m.key}" aria-pressed="${m.key === rankKey}">${m.label}</button>`).join("");
@@ -693,6 +694,7 @@ function show(i){
     <div class="desc"><h3>キャラクター説明</h3>${txt(c.description)}</div>
     <div class="likes"><div><h3>好きなこと</h3>${txt(c.likes)}</div><div><h3>嫌いなこと</h3>${txt(c.dislikes)}</div></div>`;
   $("prev").disabled = $("next").disabled = view.length < 2;
+  $("dlg").scrollTop = 0;  // いつもプロフィールの先頭から表示
   requestAnimationFrame(() => fitAll($("dlg")));
 }
 
@@ -710,6 +712,7 @@ const openAt = e => {
   const b = e.target.closest("[data-i]"); if (!b) return;
   if (!$("dlg").open) $("dlg").showModal();
   show(+b.dataset.i);
+  $("dName").focus({ preventScroll: true });
 };
 $("grid").addEventListener("click", openAt);
 $("ranking").addEventListener("click", openAt);
@@ -726,6 +729,7 @@ $("bday").addEventListener("click", e => {
   view = ctx[b.dataset.ctx];
   if (!$("dlg").open) $("dlg").showModal();
   show(+b.dataset.i);
+  $("dName").focus({ preventScroll: true });
 });
 const moveMonth = n => { const d = new Date(calY, calM + n, 1); calY = d.getFullYear(); calM = d.getMonth(); renderBday(); };
 $("calPrev").onclick = () => moveMonth(-1);
@@ -738,6 +742,7 @@ $("gens").addEventListener("click", e => {
     view = chars.filter(x => x.ki === c.ki).sort(sorters.no);
     if (!$("dlg").open) $("dlg").showModal();
     show(view.indexOf(c));
+    $("dName").focus({ preventScroll: true });
     return;
   }
   const kb = e.target.closest("[data-ki]");
