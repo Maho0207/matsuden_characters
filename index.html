@@ -57,7 +57,7 @@ button{font:inherit;color:inherit}
   border-bottom:1px solid var(--line);padding:12px 0;padding-top:calc(12px + env(safe-area-inset-top,0px))}
 .controls .wrap{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
 .seg{display:inline-flex;background:var(--sky-soft);border-radius:999px;padding:4px}
-.seg button{border:none;background:transparent;border-radius:999px;padding:7px 16px;cursor:pointer;font-weight:700;color:var(--muted);min-height:36px}
+.seg button{white-space:nowrap;border:none;background:transparent;border-radius:999px;padding:7px 16px;cursor:pointer;font-weight:700;color:var(--muted);min-height:36px}
 .seg button[aria-pressed="true"]{background:var(--surface);color:var(--sky-deep);box-shadow:0 1px 4px rgba(12,95,138,.18)}
 .controls input,.controls select{font:inherit;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:8px 12px;min-height:44px}
 .controls input{flex:1 1 200px}
@@ -162,6 +162,83 @@ button.leader:hover{border-color:var(--sky)}
 .gen-foot{padding:0 18px 18px}
 .gen-foot button{width:100%;cursor:pointer;background:var(--sky);color:var(--on-sky);border:none;border-radius:12px;padding:10px;font-weight:700;min-height:44px}
 
+/* ホーム */
+.home{display:grid;gap:44px}
+.sec-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:14px}
+.sec-head h2{font-size:21px;font-weight:800;margin:0}
+.more{background:none;border:none;cursor:pointer;color:var(--sky-deep);font-weight:700;padding:6px 0;min-height:36px;white-space:nowrap}
+.more:hover{text-decoration:underline}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px}
+.tile{cursor:pointer;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:18px;display:grid;
+  grid-template-columns:48px 1fr;gap:4px 14px;align-items:center}
+.tile:hover{border-color:var(--sky);box-shadow:0 8px 24px rgba(30,155,215,.14)}
+.tile .ico{grid-row:span 2;width:48px;height:48px;border-radius:14px;background:var(--sky-soft);color:var(--sky-deep);display:grid;place-items:center}
+.tile .ico svg{width:26px;height:26px}
+.tile b{font-size:17px;font-weight:800}
+.tile small{color:var(--muted);font-size:13px;line-height:1.5}
+.pick{display:grid;grid-template-columns:minmax(0,340px) minmax(0,1fr);background:var(--surface);border:1px solid var(--line);border-radius:28px;overflow:hidden}
+.pick .pic{width:100%;height:100%;min-height:340px;aspect-ratio:3/4;border-radius:0;position:relative}
+.pick .pic img{object-position:center top}
+.pick .initial{font-size:120px}
+.pick-body{padding:26px 28px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.pick-label{font-size:13px;font-weight:700;color:var(--sky-deep);letter-spacing:.08em}
+.pick .tags{display:flex;gap:6px;flex-wrap:wrap}
+.pick-no{font-family:var(--num);font-weight:800;font-size:26px;color:var(--sky-deep);line-height:1}
+.pick-name{font-size:34px;font-weight:800;line-height:1.25}
+.pick-yomi{color:var(--muted);font-size:14px;margin-top:-6px}
+.pick-hito{background:var(--sky-soft);color:var(--sky-deep);border-radius:16px;padding:10px 16px;font-weight:700;margin:4px 0 0}
+.pick-desc{margin:0;color:var(--ink);display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.pick-stats{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;margin-top:4px}
+.pick-stats div{background:var(--sky-soft);border-radius:12px;padding:8px 6px;text-align:center}
+.pick-stats span{display:block;font-size:11px;color:var(--muted)}
+.pick-stats b{font-family:var(--num);font-weight:700;font-size:17px}
+.pick-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:auto;padding-top:8px}
+.pick-actions button{cursor:pointer;border-radius:12px;padding:10px 18px;min-height:44px;font-weight:700;border:1px solid var(--line);background:var(--surface)}
+.pick-actions .primary{background:var(--sky);border-color:var(--sky);color:var(--on-sky)}
+.pick-actions button:hover{border-color:var(--sky)}
+@media (max-width:720px){
+  .pick{grid-template-columns:1fr}
+  .pick .pic{min-height:0;aspect-ratio:4/5;max-height:420px}
+  .pick-body{padding:20px}
+  .pick-name{font-size:28px}
+  .pick-stats{grid-template-columns:repeat(5,minmax(0,1fr));gap:4px}
+  .pick-stats b{font-size:14px}
+}
+
+/* お知らせ */
+.news{list-style:none;margin:0;padding:0;background:var(--surface);border:1px solid var(--line);border-radius:22px;overflow:hidden}
+.news li+li{border-top:1px solid var(--line)}
+.news-row{width:100%;text-align:left;cursor:pointer;background:none;border:none;display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:16px;align-items:center;padding:15px 20px}
+.news-row:hover{background:var(--sky-soft)}
+.news-row time{font-family:var(--num);font-weight:700;color:var(--muted);font-size:14px;white-space:nowrap}
+.news-row .ttl{font-weight:700;line-height:1.5}
+.new{display:inline-block;font-size:11px;font-weight:800;letter-spacing:.04em;color:#3A2A00;background:var(--gold);border-radius:6px;padding:0 6px;margin-right:8px;vertical-align:2px}
+.chev{width:18px;height:18px;color:var(--muted);flex:none}
+.news-empty{padding:28px 20px;text-align:center;color:var(--muted)}
+.article{max-width:820px;margin:0 auto;scroll-margin-top:96px}
+.article-card{background:var(--surface);border:1px solid var(--line);border-radius:26px;padding:30px clamp(20px,5vw,48px) 36px;margin-top:12px}
+.article-card time{font-family:var(--num);font-weight:700;color:var(--muted);font-size:15px}
+.article-card h1{font-size:clamp(24px,4vw,32px);font-weight:800;line-height:1.4;margin:8px 0 22px}
+.article-body{white-space:pre-wrap;overflow-wrap:anywhere;font-size:16px;line-height:1.95;padding-top:22px;border-top:1px solid var(--line)}
+.article-body a{color:var(--sky-deep);font-weight:700}
+.article-body .blank{color:var(--muted)}
+.article-link{display:inline-block;margin-top:24px;background:var(--sky);color:var(--on-sky);font-weight:700;text-decoration:none;border-radius:12px;padding:11px 20px}
+.article-nav{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px}
+.article-nav button{cursor:pointer;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:12px 16px;min-height:64px}
+.article-nav button:hover{border-color:var(--sky)}
+.article-nav .older{text-align:right;grid-column:2}
+.article-nav small{display:block;font-size:12px;color:var(--muted)}
+.article-nav b{display:block;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+@media (max-width:620px){
+  .news-row{grid-template-columns:minmax(0,1fr) auto;gap:2px 12px;padding:14px 16px}
+  .news-row time{grid-column:1;font-size:13px}
+  .news-row .ttl{grid-column:1}
+  .news-row .chev{grid-column:2;grid-row:1 / span 2}
+  .article{scroll-margin-top:12px}
+  .article-nav{grid-template-columns:1fr}
+  .article-nav .older{grid-column:1}
+}
+
 /* 誕生日 */
 .sec-title{font-size:20px;font-weight:800;margin:0 0 12px}
 .upcoming{margin-bottom:40px}
@@ -247,6 +324,8 @@ dialog::backdrop{background:rgba(6,30,45,.55);backdrop-filter:blur(3px)}
 .d-foot .close{margin-left:auto;background:var(--sky);border-color:var(--sky);color:var(--on-sky);font-weight:700}
 @media (max-width:620px){
   .controls{position:static}
+  .seg{display:flex;width:100%;overflow-x:auto}
+  .seg button{flex:1 0 auto;padding:7px 9px;font-size:14px}
   .d-no{font-size:26px}
   .d-head h2{font-size:26px}
   .d-head{padding:20px 20px 0}
@@ -284,7 +363,8 @@ dialog::backdrop{background:rgba(6,30,45,.55);backdrop-filter:blur(3px)}
 
 <div class="controls"><div class="wrap">
   <div class="seg" role="group" aria-label="表示切り替え">
-    <button type="button" data-mode="cards" aria-pressed="true">図鑑</button>
+    <button type="button" data-mode="home" aria-pressed="true">ホーム</button>
+    <button type="button" data-mode="cards" aria-pressed="false">図鑑</button>
     <button type="button" data-mode="rank" aria-pressed="false">ランキング</button>
     <button type="button" data-mode="gen" aria-pressed="false">期データ</button>
     <button type="button" data-mode="bday" aria-pressed="false">誕生日</button>
@@ -308,6 +388,41 @@ dialog::backdrop{background:rgba(6,30,45,.55);backdrop-filter:blur(3px)}
   <ul class="grid" id="grid"></ul>
   <ol class="ranking" id="ranking" hidden></ol>
   <ul class="gens" id="gens" hidden></ul>
+  <div class="home" id="home" hidden>
+    <section id="newsSec" hidden>
+      <div class="sec-head"><h2>お知らせ</h2><button class="more" type="button" data-go="news" id="newsMore">すべてのお知らせ →</button></div>
+      <ul class="news" id="homeNews"></ul>
+    </section>
+    <section>
+      <div class="sec-head"><h2>今日のピックアップ</h2></div>
+      <div id="pick"></div>
+    </section>
+    <section>
+      <div class="sec-head"><h2>図鑑のメニュー</h2></div>
+      <div class="tiles" id="tiles"></div>
+    </section>
+    <section>
+      <div class="sec-head"><h2>もうすぐ誕生日</h2><button class="more" type="button" data-go="bday">誕生日カレンダーへ →</button></div>
+      <ol class="grid" id="homeBday"></ol>
+    </section>
+    <section>
+      <div class="sec-head"><h2>合計能力値トップ3</h2><button class="more" type="button" data-go="rank">ランキングを見る →</button></div>
+      <ol class="ranking" id="homeTop"></ol>
+    </section>
+    <section>
+      <div class="sec-head"><h2>新しく追加されたキャラ</h2><button class="more" type="button" data-go="cards">図鑑を見る →</button></div>
+      <ol class="grid" id="homeNew"></ol>
+    </section>
+    <section>
+      <div class="sec-head"><h2>最新の期</h2><button class="more" type="button" data-go="gen">期データを見る →</button></div>
+      <ul class="gens" id="homeGen"></ul>
+    </section>
+  </div>
+  <section id="newsPage" hidden>
+    <div class="sec-head"><h2>松電キャラクターズからのお知らせ</h2><button class="more" type="button" id="newsBack">← ホームへ戻る</button></div>
+    <ul class="news" id="newsList"></ul>
+  </section>
+  <section class="article" id="articlePage" hidden></section>
   <section id="bday" hidden>
     <h2 class="sec-title">もうすぐ誕生日</h2>
     <ol class="grid upcoming" id="upcoming"></ol>
@@ -352,7 +467,7 @@ dialog::backdrop{background:rgba(6,30,45,.55);backdrop-filter:blur(3px)}
 
 <script>
 // ▼ Apps Script を「ウェブアプリ」としてデプロイしたときのURL（最後が /exec）に置き換えてください
-const API_URL = "https://script.google.com/macros/s/AKfycbzEVLNEROGdg4PF4apypmoWanu5PnxeMlo0_E_2cr0DfVLjx1kzZTzoOc390A8R9BSquQ/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycby128yclCBR_ysfSZTxf9K8OPTTSt2BUdj8P21nNRkxwJB0aaFVviKpbeKmJuH_M2rxdg/exec";
 
 const STAT_NAMES = ["体力","パワー","ガード","コミュ力","学力"];
 const METRICS = [
@@ -372,7 +487,7 @@ const pic = c => c.image
   : `<span class="initial" aria-hidden="true">${esc(initial(c))}</span>`;
 const txt = s => s ? `<p>${esc(s)}</p>` : `<p class="blank">未登録</p>`;
 
-let chars = [], gens = [], view = [], maxOf = {}, radarMax = 2000, cur = 0, mode = "cards", rankKey = "total";
+let chars = [], gens = [], news = [], view = [], maxOf = {}, radarMax = 2000, cur = 0, mode = "home", rankKey = "total";
 
 /* 並び順 */
 const sorters = {
@@ -404,7 +519,7 @@ async function load(){
     if (!res.ok) throw new Error(`データを取得できませんでした（HTTP ${res.status}）。少し待ってから再読み込みしてください。`);
     const json = await res.json();
     if (json.error) throw new Error("スプレッドシートを読み取れませんでした: " + json.error);
-    build(json.characters || [], json.generations || []);
+    build(json.characters || [], json.generations || [], json.news || []);
     setStatus("");
   } catch (e) {
     setStatus(e instanceof SyntaxError || e instanceof TypeError
@@ -413,7 +528,8 @@ async function load(){
   }
 }
 
-function build(list, genList){
+function build(list, genList, newsList){
+  news = newsList || [];
   const today = new Date();
   chars = list.map(c => {
     let age = today.getFullYear() - c.year;
@@ -513,6 +629,142 @@ function renderBday(){
   requestAnimationFrame(() => fitAll($("bday")));
 }
 
+/* お知らせ */
+const CHEV = '<svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>';
+const linkify = t => esc(t).replace(/https?:\/\/[^\s<"]+/g, u => `<a href="${u}" target="_blank" rel="noopener">${u}</a>`);
+// 日付が未来のお知らせは、その日になるまで表示しない（予約投稿）
+const visibleNews = () => { const end = todayMidnight().getTime() + 86400000; return news.filter(n => !n.time || n.time < end); };
+const isNewNews = n => n.time && (Date.now() - n.time) < 14 * 86400000;
+// お知らせごとのID（日付と題名から作るので、行を追加しても変わらない）
+const newsId = n => { let h = 0; for (const ch of n.date + "|" + n.title) h = (h * 31 + ch.codePointAt(0)) >>> 0; return h.toString(36); };
+const newBadge = n => isNewNews(n) ? `<span class="new">NEW</span>` : "";
+const newsItem = n => `<li><button class="news-row" type="button" data-news="${newsId(n)}">
+  <time>${esc(n.date)}</time><span class="ttl">${newBadge(n)}${esc(n.title)}</span>${CHEV}
+</button></li>`;
+let curNewsId = "";
+function renderNewsPage(){
+  const list = visibleNews();
+  $("newsList").innerHTML = list.length ? list.map(newsItem).join("") : `<li class="news-empty">お知らせはまだありません。</li>`;
+  $("count").textContent = "";
+}
+function renderArticle(){
+  const list = visibleNews();
+  const i = list.findIndex(n => newsId(n) === curNewsId);
+  $("count").textContent = "";
+  const back = `<button class="more" type="button" data-back>← お知らせ一覧へ</button>`;
+  if (i < 0) {
+    $("articlePage").innerHTML = back + `<div class="article-card"><p class="news-empty">${chars.length ? "このお知らせは見つかりませんでした。" : "読み込んでいます…"}</p></div>`;
+    return;
+  }
+  const n = list[i], newer = list[i - 1], older = list[i + 1];
+  document.title = `${n.title}｜松電キャラクターズ図鑑`;
+  $("articlePage").innerHTML = `${back}
+    <article class="article-card">
+      <time>${esc(n.date)}</time>${isNewNews(n) ? ` <span class="new">NEW</span>` : ""}
+      <h1>${esc(n.title)}</h1>
+      <div class="article-body">${n.body ? linkify(n.body) : `<span class="blank">本文はありません。</span>`}</div>
+      ${n.link ? `<a class="article-link" href="${esc(n.link)}" target="_blank" rel="noopener">詳しくはこちら →</a>` : ""}
+    </article>
+    <nav class="article-nav" aria-label="ほかのお知らせ">
+      ${newer ? `<button type="button" data-news="${newsId(newer)}"><small>← 新しいお知らせ</small><b>${esc(newer.title)}</b></button>` : ""}
+      ${older ? `<button class="older" type="button" data-news="${newsId(older)}"><small>前のお知らせ →</small><b>${esc(older.title)}</b></button>` : ""}
+    </nav>`;
+}
+
+/* ホーム */
+const ICONS = {
+  news:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>',
+  cards: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M4 21a2 2 0 0 1 2-2h13v2"/><path d="M9 8h6M9 12h4"/></svg>',
+  rank:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h8M12 17v4"/><path d="M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M7 6H4v1a3 3 0 0 0 3 3M17 6h3v1a3 3 0 0 1-3 3"/></svg>',
+  gen:   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 3 8l9 5 9-5z"/><path d="m3 13 9 5 9-5"/></svg>',
+  bday:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V12a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v9z"/><path d="M4 15c2 1.5 4 1.5 6 0s4-1.5 6 0 3 1 4 0"/><path d="M12 10V6M12 3.5v.01"/><path d="M3 21h18"/></svg>'
+};
+let pickIndex = null;
+function dailyPick(){
+  const t = new Date(), seed = t.getFullYear() * 10000 + (t.getMonth() + 1) * 100 + t.getDate();
+  let x = seed; x = ((x >>> 16) ^ x) * 0x45d9f3b; x = ((x >>> 16) ^ x) >>> 0;   // 日付から毎日変わる番号
+  return x % chars.length;
+}
+const cardTags = c => `<span class="tags"><span class="tag ki">${c.ki}期生</span>${c.team ? `<span class="tag team">${esc(c.team)}</span>` : ""}${c.isLeader ? `<span class="tag lead">リーダー</span>` : ""}</span>`;
+const miniCard = (c, ctxName, i, overlay, foot, extraClass) => `<li><button class="card${extraClass || ""}" type="button" data-ctx="${ctxName}" data-i="${i}">
+  <span class="pic">${pic(c)}<span class="badge">No.${c.no}</span>${overlay || ""}</span>
+  <span class="body"><span class="info">${cardTags(c)}<span class="name fit">${esc(c.name)}</span><span class="yomi fit">${esc(c.yomi)}</span></span>${foot}</span>
+</button></li>`;
+
+function renderHome(){
+  if (!chars.length) return;
+  // ピックアップ
+  if (pickIndex === null) pickIndex = dailyPick();
+  const p = chars[pickIndex];
+  ctx.pick = [p];
+  $("pick").innerHTML = `<article class="pick">
+    <span class="pic">${pic(p)}</span>
+    <div class="pick-body">
+      <span class="pick-label">PICK UP</span>
+      ${cardTags(p)}
+      <span class="pick-no">No.${p.no}</span>
+      <span class="pick-name fit">${esc(p.name)}</span>
+      <span class="pick-yomi fit">${esc(p.yomi)}</span>
+      ${p.hitokoto ? `<p class="pick-hito">「${esc(p.hitokoto)}」</p>` : ""}
+      ${p.description ? `<p class="pick-desc">${esc(p.description)}</p>` : ""}
+      <div class="pick-stats">${STAT_NAMES.map((n, i) => `<div><span>${n}</span><b>${p.stats[i]}</b></div>`).join("")}</div>
+      <div class="pick-actions">
+        <button class="primary" type="button" data-ctx="pick" data-i="0">プロフィールを見る</button>
+        <button type="button" id="repick">ほかのキャラを見る</button>
+      </div>
+    </div>
+  </article>`;
+
+  // お知らせ（最新3件）
+  const vn = visibleNews();
+  $("newsSec").hidden = !vn.length;
+  $("newsMore").hidden = vn.length <= 3;
+  $("homeNews").innerHTML = vn.slice(0, 3).map(newsItem).join("");
+
+  // メニュー
+  const todayCount = chars.filter(c => c.daysUntil === 0).length;
+  $("tiles").innerHTML = [
+    ["cards", "図鑑", `${chars.length}人のキャラクターを一覧で見る`],
+    ["rank", "ランキング", "合計能力値や各ステータスの順位"],
+    ["gen", "期データ", `${gens.length}期それぞれのリーダーと平均ステータス`],
+    ["bday", "誕生日", todayCount ? `今日は${todayCount}人の誕生日！` : "もうすぐ誕生日のキャラとカレンダー"],
+    ["news", "お知らせ", vn.length ? `最新：${esc(vn[0].title)}` : "松電キャラクターズからのお知らせ"]
+  ].map(([m, t, d]) => `<button class="tile" type="button" data-go="${m}"><span class="ico">${ICONS[m]}</span><b>${t}</b><small>${d}</small></button>`).join("");
+
+  // もうすぐ誕生日（4人）
+  ctx.homeBday = chars.filter(c => c.nextBday).sort((a, b) => a.daysUntil - b.daysUntil || a.no - b.no).slice(0, 4);
+  $("homeBday").innerHTML = ctx.homeBday.map((c, i) => {
+    const d = c.daysUntil, n = c.nextBday;
+    return miniCard(c, "homeBday", i,
+      `<span class="countdown">${d === 0 ? "今日！" : d === 1 ? "明日" : `あと${d}日`}</span>`,
+      `<span class="foot bday-foot"><span class="bdate">${n.getMonth() + 1}月${n.getDate()}日（${WD[n.getDay()]}）</span><span class="turn">${d === 0 ? `今日で${c.turning}歳` : `${c.turning}歳に`}</span></span>`,
+      d === 0 ? " bday-today" : "");
+  }).join("");
+
+  // 合計能力値トップ3
+  ctx.homeTop = [...chars].sort(sorters.total).slice(0, 3);
+  $("homeTop").innerHTML = ctx.homeTop.map((c, i) => {
+    const r = c.ranks.total;
+    return `<li><button class="row${r <= 3 ? " r" + r : ""}" type="button" data-ctx="homeTop" data-i="${i}">
+      <span class="place">${r}</span><span class="pic">${pic(c)}</span>
+      <span class="info"><span class="name fit">${esc(c.name)}</span><span class="sub fit">${c.ki}期生${c.team ? "　" + esc(c.team) : ""}</span></span>
+      <span class="val"><span class="bar"><i style="width:${(c.total / maxOf.total * 100).toFixed(1)}%"></i></span><b>${c.total.toFixed(2)}</b></span>
+    </button></li>`;
+  }).join("");
+
+  // 新しく追加されたキャラ（4人）
+  ctx.homeNew = [...chars].sort((a, b) => String(b.added).localeCompare(String(a.added)) || b.no - a.no).slice(0, 4);
+  $("homeNew").innerHTML = ctx.homeNew.map((c, i) => miniCard(c, "homeNew", i, "",
+    `<span class="foot bday-foot"><span class="flabel">追加日</span><span class="bdate">${esc(c.added)}</span></span>`)).join("");
+
+  // 最新の期
+  const latest = gens.reduce((a, g) => (!a || g.ki > a.ki) ? g : a, null);
+  $("homeGen").innerHTML = latest ? genCard(latest) : "";
+
+  $("count").textContent = "";
+  requestAnimationFrame(() => fitAll($("home")));
+}
+
 /* 期ごとのデータ */
 const norm = s => String(s || "").replace(/[\s　]/g, "");
 function buildGens(kis, genList){
@@ -578,16 +830,26 @@ function filtered(){
 }
 
 function render(){
-  const isRank = mode === "rank", isGen = mode === "gen", isBday = mode === "bday";
+  const isRank = mode === "rank", isGen = mode === "gen", isBday = mode === "bday", isHome = mode === "home";
+  const isNews = mode === "news", isArticle = mode === "article";
+  $("articlePage").hidden = !isArticle;
+  if (!isArticle) document.title = "松電キャラクターズ図鑑";
+  $("home").hidden = !isHome;
+  $("newsPage").hidden = !isNews;
   $("grid").hidden = mode !== "cards";
   $("ranking").hidden = !isRank;
   $("gens").hidden = !isGen;
   $("bday").hidden = !isBday;
   $("chips").hidden = !isRank;
   $("sort").hidden = mode !== "cards";
+  $("ki").hidden = $("team").hidden = !(mode === "cards" || isRank);
   $("genSort").hidden = !isGen;
-  ["q", "ki", "team"].forEach(id => $(id).hidden = isGen || isBday);
+  $("q").hidden = isGen || isBday || isNews || isArticle;
 
+  if (isArticle) { $("empty").hidden = true; renderArticle(); return; }
+
+  if (isNews) { $("empty").hidden = true; renderNewsPage(); return; }
+  if (isHome) { $("empty").hidden = true; renderHome(); return; }
   if (isBday) { $("empty").hidden = true; renderBday(); return; }
 
   if (isGen) {
@@ -716,13 +978,55 @@ const openAt = e => {
 };
 $("grid").addEventListener("click", openAt);
 $("ranking").addEventListener("click", openAt);
-function setMode(m){
+// URLの末尾（#zukan など）で画面を切り替え・ブックマークできるようにする
+const HASH = { home: "home", cards: "zukan", rank: "ranking", gen: "generations", bday: "birthday", news: "news" };
+const hashFor = m => m === "article" ? "news-" + curNewsId : HASH[m];
+const modeFromHash = () => {
+  const m = location.hash.match(/^#news-([0-9a-z]+)$/);
+  if (m) { curNewsId = m[1]; return "article"; }
+  return Object.keys(HASH).find(k => "#" + HASH[k] === location.hash) || "home";
+};
+function setMode(m, fromHash){
   mode = m;
   document.querySelectorAll(".seg button").forEach(x => x.setAttribute("aria-pressed", x.dataset.mode === m));
+  if (!fromHash && location.hash !== "#" + hashFor(m)) history.pushState(null, "", "#" + hashFor(m));
   render();
+  if (!fromHash) { if (m === "article") $("articlePage").scrollIntoView({ block: "start" }); else window.scrollTo({ top: 0 }); }
 }
+addEventListener("hashchange", () => setMode(modeFromHash(), true));
+addEventListener("popstate", () => setMode(modeFromHash(), true));
 document.querySelector(".seg").addEventListener("click", e => {
   const b = e.target.closest("button[data-mode]"); if (b) setMode(b.dataset.mode);
+});
+$("newsBack").onclick = () => setMode("home");
+// お知らせを押すと、その記事の画面を開く
+document.addEventListener("click", e => {
+  const nb = e.target.closest("[data-news]");
+  if (nb) { curNewsId = nb.dataset.news; setMode("article"); return; }
+  if (e.target.closest("[data-back]")) setMode("news");
+});
+$("home").addEventListener("click", e => {
+  if (e.target.closest("#repick")) {
+    let n; do { n = Math.floor(Math.random() * chars.length); } while (chars.length > 1 && n === pickIndex);
+    pickIndex = n; renderHome(); return;
+  }
+  const go = e.target.closest("[data-go]");
+  if (go) { setMode(go.dataset.go); return; }
+  const ch = e.target.closest("[data-char]");
+  if (ch) {
+    const c = chars.find(x => x.no === +ch.dataset.char); if (!c) return;
+    view = chars.filter(x => x.ki === c.ki).sort(sorters.no);
+    if (!$("dlg").open) $("dlg").showModal();
+    show(view.indexOf(c)); $("dName").focus({ preventScroll: true });
+    return;
+  }
+  const kb = e.target.closest("[data-ki]");
+  if (kb) { $("ki").value = kb.dataset.ki; $("team").value = ""; $("q").value = ""; setMode("cards"); return; }
+  const b = e.target.closest("[data-ctx]"); if (!b) return;
+  view = ctx[b.dataset.ctx];
+  if (!$("dlg").open) $("dlg").showModal();
+  show(+b.dataset.i);
+  $("dName").focus({ preventScroll: true });
 });
 $("bday").addEventListener("click", e => {
   const b = e.target.closest("[data-ctx]"); if (!b) return;
@@ -767,7 +1071,9 @@ $("dlg").addEventListener("keydown", e => {
   if (e.key === "ArrowLeft") show(cur - 1);
   if (e.key === "ArrowRight") show(cur + 1);
 });
-["q","ki","team","sort","genSort"].forEach(id => $(id).addEventListener("input", render));
+["ki","team","sort","genSort"].forEach(id => $(id).addEventListener("input", render));
+$("q").addEventListener("input", () => mode === "home" ? setMode("cards") : render());
+setMode(modeFromHash(), true);
 load();
 </script>
 </body>
