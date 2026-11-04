@@ -239,6 +239,66 @@ button.leader:hover{border-color:var(--sky)}
   .article-nav .older{grid-column:1}
 }
 
+/* 期の詳細 */
+.pic img{object-position:center top}
+button.gen-head{border:none;width:100%;text-align:left;cursor:pointer;font:inherit}
+button.gen-head:hover{filter:brightness(1.06)}
+.genpage{display:grid;gap:20px;scroll-margin-top:96px}
+.gp-hero{background:var(--hero);color:#fff;border-radius:26px;padding:26px 28px;display:flex;align-items:flex-end;gap:22px;flex-wrap:wrap}
+.gp-hero .gen-no{font-size:68px}
+.gp-team{font-size:28px;font-weight:800;line-height:1.3}
+.gp-team.unset{opacity:.75;font-size:16px;font-weight:500}
+.gp-meta{opacity:.92;font-size:14px;margin-top:4px}
+.gp-grid{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:18px}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:24px;padding:20px 22px;min-width:0}
+.panel h3{margin:0 0 12px;font-size:15px;font-weight:700;color:var(--muted)}
+.gp-leader{display:flex;align-items:center;gap:16px;width:100%;text-align:left;background:var(--sky-soft);border:1px solid transparent;border-radius:20px;padding:10px;margin-bottom:16px}
+button.gp-leader{cursor:pointer}
+button.gp-leader:hover{border-color:var(--sky)}
+.gp-leader .pic{width:84px;height:104px;border-radius:16px}
+.gp-leader .initial{font-size:36px}
+.gp-leader .who{flex:1;min-width:0}
+.gp-leader small{display:block;font-size:12px;color:var(--muted);font-weight:700}
+.gp-leader b{font-size:22px;font-weight:800}
+.gp-leader .y{font-size:13px;color:var(--muted)}
+.kpis{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.kpis div{background:var(--sky-soft);border-radius:14px;padding:10px 12px;min-width:0}
+.kpis span{display:block;font-size:12px;color:var(--muted)}
+.kpis b{font-family:var(--num);font-weight:700;font-size:20px}
+.kpis em{font-style:normal;font-size:12px;color:var(--sky-deep);font-weight:700;margin-left:6px;white-space:nowrap}
+.kpis .main{grid-column:1/-1}
+.kpis .main b{font-size:32px;color:var(--sky-deep)}
+.legend{display:flex;gap:18px;justify-content:center;font-size:12px;color:var(--muted);margin-top:4px}
+.legend i{display:inline-block;width:16px;height:4px;border-radius:2px;margin-right:6px;vertical-align:middle;background:var(--sky)}
+.legend i.all{background:none;border-top:2px dashed var(--muted);height:0}
+.gp-radar{max-width:340px;margin:0 auto}
+.gp-radar svg{width:100%;height:auto;display:block}
+.gp-radar text{font-family:var(--font);font-size:12px;fill:var(--muted)}
+.tops{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:8px}
+.top{display:grid;grid-template-columns:40px minmax(0,1fr) auto;gap:10px;align-items:center;width:100%;text-align:left;cursor:pointer;background:var(--sky-soft);
+  border:1px solid transparent;border-radius:14px;padding:6px 12px 6px 6px}
+.top:hover{border-color:var(--sky)}
+.top .pic{width:40px;height:48px;border-radius:10px}
+.top .initial{font-size:18px}
+.top small{display:block;font-size:11px;color:var(--muted)}
+.top b{font-weight:700}
+.top .v{font-family:var(--num);font-weight:700;color:var(--sky-deep);white-space:nowrap}
+.gp-extra{margin:0;display:grid;grid-template-columns:auto 1fr;gap:6px 16px}
+.gp-extra dt{color:var(--muted);font-size:13px}
+.gp-extra dd{margin:0;white-space:pre-wrap}
+.members-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:8px}
+.members-head h2{margin:0;font-size:21px;font-weight:800}
+.members-head select{font:inherit;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:8px 12px;min-height:44px}
+@media (max-width:860px){.gp-grid{grid-template-columns:1fr}}
+@media (max-width:620px){
+  .genpage{scroll-margin-top:12px}
+  .gp-hero{padding:20px;gap:14px}
+  .gp-hero .gen-no{font-size:50px}
+  .gp-team{font-size:22px}
+  .kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .panel{padding:16px}
+}
+
 /* 誕生日 */
 .sec-title{font-size:20px;font-weight:800;margin:0 0 12px}
 .upcoming{margin-bottom:40px}
@@ -423,6 +483,7 @@ dialog::backdrop{background:rgba(6,30,45,.55);backdrop-filter:blur(3px)}
     <ul class="news" id="newsList"></ul>
   </section>
   <section class="article" id="articlePage" hidden></section>
+  <section class="genpage" id="genPage" hidden></section>
   <section id="bday" hidden>
     <h2 class="sec-title">もうすぐ誕生日</h2>
     <ol class="grid upcoming" id="upcoming"></ol>
@@ -671,6 +732,119 @@ function renderArticle(){
     </nav>`;
 }
 
+/* 期の詳細 */
+let curGenKi = 0, genMemberSort = "no";
+function radarCompare(a, b){
+  // 外周＝全ての期の平均ステータスの最大値（250単位で切り上げ）。キャラ単体より値が小さいので専用の目盛りにする
+  const peak = Math.max(...gens.flatMap(x => x.avgStats), ...b, 1);
+  const S = 300, cx = S/2, cy = S/2 + 4, R = 100, MAX = Math.ceil(peak / 250) * 250;
+  const pt = (i, r) => { const ang = -Math.PI/2 + i*2*Math.PI/5; return [cx + r*Math.cos(ang), cy + r*Math.sin(ang)]; };
+  const poly = vals => vals.map((v, i) => pt(i, R*Math.max(0, Math.min(v, MAX))/MAX).join(",")).join(" ");
+  let g = "";
+  [0.25,0.5,0.75,1].forEach(k => g += `<polygon points="${[0,1,2,3,4].map(i => pt(i, R*k).join(",")).join(" ")}" fill="none" stroke="var(--line)"/>`);
+  [0,1,2,3,4].forEach(i => { const [x,y] = pt(i,R); g += `<line x1="${cx}" y1="${cy}" x2="${x}" y2="${y}" stroke="var(--line)"/>`; });
+  g += `<polygon points="${poly(b)}" fill="none" stroke="var(--muted)" stroke-width="1.5" stroke-dasharray="4 4"/>`;
+  g += `<polygon points="${poly(a)}" fill="var(--sky)" fill-opacity=".3" stroke="var(--sky)" stroke-width="2.5" stroke-linejoin="round"/>`;
+  a.forEach((v, i) => {
+    const [x,y] = pt(i, R + 28);
+    g += `<text x="${x}" y="${y-4}" text-anchor="middle">${STAT_NAMES[i]}</text><text x="${x}" y="${y+12}" text-anchor="middle" style="fill:var(--ink);font-weight:700">${Math.round(v)}</text>`;
+  });
+  return `<svg viewBox="0 0 ${S} ${S+6}" role="img" aria-label="期の平均ステータスと全体平均の比較">${g}</svg>`;
+}
+
+function renderGenDetail(){
+  $("count").textContent = "";
+  const back = `<div><button class="more" type="button" data-back-gen>← 期データ一覧へ</button></div>`;
+  const i = gens.findIndex(g => g.ki === curGenKi);
+  if (i < 0) {
+    $("genPage").innerHTML = back + `<div class="panel"><p class="news-empty">${chars.length ? "この期のデータは見つかりませんでした。" : "読み込んでいます…"}</p></div>`;
+    return;
+  }
+  const g = gens[i], prev = gens[i - 1], next = gens[i + 1];
+  document.title = `${g.ki}期生｜松電キャラクターズ図鑑`;
+  const ms = [...g.members].sort(genMemberSort === "total" ? sorters.total : genMemberSort === "bday" ? sorters.bday : sorters.no);
+  ctx.genMembers = ms;
+  const idx = c => ms.indexOf(c);
+
+  // 加入日の範囲・所属の内訳
+  const added = g.members.map(c => c.added).filter(Boolean).sort();
+  const addedText = added.length ? (added[0] === added[added.length - 1] ? added[0] : `${added[0]} 〜 ${added[added.length - 1]}`) : "";
+  const teamCount = {};
+  g.members.forEach(c => { if (c.team) teamCount[c.team] = (teamCount[c.team] || 0) + 1; });
+  const teamText = Object.entries(teamCount).map(([t, n]) => `${esc(t)} ${n}人`).join("、");
+
+  // リーダー
+  const L = g.leader;
+  let leader;
+  if (L) {
+    const inGen = idx(L) >= 0;
+    if (!inGen) ctx.genLeader = [L];
+    leader = `<button class="gp-leader" type="button" data-ctx="${inGen ? "genMembers" : "genLeader"}" data-i="${inGen ? idx(L) : 0}">
+      <span class="pic">${pic(L)}</span><span class="who"><small>リーダー</small><b class="fit">${esc(L.name)}</b><span class="y fit">${esc(L.yomi)}　No.${L.no}</span></span></button>`;
+  } else {
+    leader = `<div class="gp-leader"><span class="pic"><span class="initial">?</span></span><span class="who"><small>リーダー</small><b class="fit">${g.leaderName ? esc(g.leaderName) : "未設定"}</b></span></div>`;
+  }
+
+  // 全体平均との比較
+  const allAvg = STAT_NAMES.map((_, k) => chars.reduce((a, c) => a + c.stats[k], 0) / chars.length);
+
+  // 項目別トップ
+  const tops = METRICS.map(m => {
+    const t = g.members.reduce((a, c) => m.get(c) > m.get(a) ? c : a, g.members[0]);
+    return `<button class="top" type="button" data-ctx="genMembers" data-i="${idx(t)}">
+      <span class="pic">${pic(t)}</span><span class="who"><small>${m.label}</small><b class="fit">${esc(t.name)}</b></span><span class="v">${m.fmt(m.get(t))}</span></button>`;
+  }).join("");
+
+  const extra = Object.entries(g.extra);
+  const memberCard = (c, k) => miniCard(c, "genMembers", k, "",
+    `<span class="foot"><span class="flabel">合計能力値</span><span class="score">${c.total.toFixed(2)}</span><span class="rk">${c.ranks.total}位</span>
+      <span class="bar"><i style="width:${(Math.max(0, c.total) / maxOf.total * 100).toFixed(1)}%"></i></span></span>`);
+
+  $("genPage").innerHTML = `${back}
+    <div class="gp-hero">
+      <span class="gen-no">${g.ki}<small>期生</small></span>
+      <div>
+        <div class="gp-team${g.team ? "" : " unset"}">${g.team ? esc(g.team) : "愛称未設定"}</div>
+        <div class="gp-meta">メンバー ${g.count}人${addedText ? `　加入日 ${esc(addedText)}` : ""}${teamText ? `　所属 ${teamText}` : ""}</div>
+      </div>
+    </div>
+    <div class="gp-grid">
+      <div class="panel">
+        ${leader}
+        <div class="kpis">
+          <div class="main"><span>平均合計能力値</span><b>${fmt2(g.avgTotal)}</b><em>${gens.length}期中 ${g.rank}位</em></div>
+          <div><span>平均5ステ計</span><b>${fmt1(g.avgSum5)}</b></div>
+          <div><span>平均IQ</span><b>${fmt1(g.avgIq)}</b></div>
+          <div><span>平均身長</span><b>${fmt1(g.avgHeight)}</b><em>cm</em></div>
+          <div><span>平均体重</span><b>${fmt1(g.avgWeight)}</b><em>kg</em></div>
+          <div><span>平均年齢</span><b>${fmt1(g.avgAge)}</b><em>歳</em></div>
+          <div><span>人数</span><b>${g.count}</b><em>人</em></div>
+        </div>
+      </div>
+      <div class="panel">
+        <h3>平均ステータス</h3>
+        <div class="gp-radar">${radarCompare(g.avgStats, allAvg)}</div>
+        <div class="legend"><span><i></i>${g.ki}期生の平均</span><span><i class="all"></i>全体の平均</span></div>
+      </div>
+    </div>
+    <div class="panel"><h3>項目別トップ</h3><div class="tops">${tops}</div></div>
+    ${extra.length ? `<div class="panel"><h3>期のデータ</h3><dl class="gp-extra">${extra.map(([k, v]) => `<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join("")}</dl></div>` : ""}
+    <div class="members-head">
+      <h2>メンバー（${g.count}人）</h2>
+      <select id="genMemberSort" aria-label="メンバーの並び順">
+        <option value="no"${genMemberSort === "no" ? " selected" : ""}>番号順</option>
+        <option value="total"${genMemberSort === "total" ? " selected" : ""}>合計能力値が高い順</option>
+        <option value="bday"${genMemberSort === "bday" ? " selected" : ""}>誕生日順（1月から）</option>
+      </select>
+    </div>
+    <ul class="grid">${ms.map(memberCard).join("")}</ul>
+    <nav class="article-nav" aria-label="ほかの期">
+      ${prev ? `<button type="button" data-gen="${prev.ki}"><small>← 前の期</small><b>${prev.ki}期生${prev.team ? "「" + esc(prev.team) + "」" : ""}</b></button>` : ""}
+      ${next ? `<button class="older" type="button" data-gen="${next.ki}"><small>次の期 →</small><b>${next.ki}期生${next.team ? "「" + esc(next.team) + "」" : ""}</b></button>` : ""}
+    </nav>`;
+  requestAnimationFrame(() => fitAll($("genPage")));
+}
+
 /* ホーム */
 const ICONS = {
   news:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>',
@@ -779,7 +953,7 @@ function buildGens(kis, genList){
     return {
       ki: k, team: g.team || "", leaderName: g.leader || "", leader, extra: g.extra || {}, count: ms.length,
       avgTotal: avg(c => c.total), avgSum5: avg(c => c.sum5), avgStats: STAT_NAMES.map((_, i) => avg(c => c.stats[i])),
-      avgIq: avg(c => c.iq), avgHeight: avg(c => c.height), avgAge: avg(c => c.age),
+      avgIq: avg(c => c.iq), avgHeight: avg(c => c.height), avgAge: avg(c => c.age), avgWeight: avg(c => c.weight), members: ms,
       top: ms.reduce((a, c) => c.total > a.total ? c : a, ms[0])
     };
   });
@@ -796,11 +970,11 @@ function genCard(g){
     ? `<button class="leader" type="button" data-char="${L.no}"><span class="pic">${pic(L)}</span><span class="who"><small>リーダー</small><b class="fit">${esc(L.name)}</b></span></button>`
     : `<div class="leader"><span class="pic"><span class="initial">?</span></span><span class="who"><small>リーダー</small><b class="fit">${g.leaderName ? esc(g.leaderName) : "未設定"}</b></span></div>`;
   return `<li><article class="gen">
-    <div class="gen-head">
+    <button class="gen-head" type="button" data-gen="${g.ki}" aria-label="${g.ki}期生の詳細を見る">
       <span class="gen-no">${g.ki}<small>期生</small></span>
       <span class="gen-team fit${g.team ? "" : " unset"}">${g.team ? esc(g.team) : "愛称未設定"}</span>
       <span class="gen-count">${g.count}人</span>
-    </div>
+    </button>
     <div class="gen-body">
       ${leader}
       <div class="avg-total"><span>平均合計能力値</span><b>${fmt2(g.avgTotal)}</b><em>${gens.length}期中 ${g.rank}位</em></div>
@@ -815,7 +989,7 @@ function genCard(g){
         ${Object.entries(g.extra).map(([k, v]) => `<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join("")}
       </dl>
     </div>
-    <div class="gen-foot"><button type="button" data-ki="${g.ki}">${g.ki}期生のメンバーを見る</button></div>
+    <div class="gen-foot"><button type="button" data-gen="${g.ki}">${g.ki}期生の詳細とメンバーを見る</button></div>
   </article></li>`;
 }
 
@@ -831,9 +1005,10 @@ function filtered(){
 
 function render(){
   const isRank = mode === "rank", isGen = mode === "gen", isBday = mode === "bday", isHome = mode === "home";
-  const isNews = mode === "news", isArticle = mode === "article";
+  const isNews = mode === "news", isArticle = mode === "article", isGenDetail = mode === "genDetail";
   $("articlePage").hidden = !isArticle;
-  if (!isArticle) document.title = "松電キャラクターズ図鑑";
+  $("genPage").hidden = !isGenDetail;
+  if (!isArticle && !isGenDetail) document.title = "松電キャラクターズ図鑑";
   $("home").hidden = !isHome;
   $("newsPage").hidden = !isNews;
   $("grid").hidden = mode !== "cards";
@@ -844,7 +1019,9 @@ function render(){
   $("sort").hidden = mode !== "cards";
   $("ki").hidden = $("team").hidden = !(mode === "cards" || isRank);
   $("genSort").hidden = !isGen;
-  $("q").hidden = isGen || isBday || isNews || isArticle;
+  $("q").hidden = isGen || isBday || isNews || isArticle || isGenDetail;
+
+  if (isGenDetail) { $("empty").hidden = true; renderGenDetail(); return; }
 
   if (isArticle) { $("empty").hidden = true; renderArticle(); return; }
 
@@ -980,18 +1157,25 @@ $("grid").addEventListener("click", openAt);
 $("ranking").addEventListener("click", openAt);
 // URLの末尾（#zukan など）で画面を切り替え・ブックマークできるようにする
 const HASH = { home: "home", cards: "zukan", rank: "ranking", gen: "generations", bday: "birthday", news: "news" };
-const hashFor = m => m === "article" ? "news-" + curNewsId : HASH[m];
+const hashFor = m => m === "article" ? "news-" + curNewsId : m === "genDetail" ? "gen-" + curGenKi : HASH[m];
 const modeFromHash = () => {
   const m = location.hash.match(/^#news-([0-9a-z]+)$/);
   if (m) { curNewsId = m[1]; return "article"; }
+  const gm = location.hash.match(/^#gen-(\d+)$/);
+  if (gm) { curGenKi = +gm[1]; return "genDetail"; }
   return Object.keys(HASH).find(k => "#" + HASH[k] === location.hash) || "home";
 };
 function setMode(m, fromHash){
   mode = m;
-  document.querySelectorAll(".seg button").forEach(x => x.setAttribute("aria-pressed", x.dataset.mode === m));
+  const segMode = m === "genDetail" ? "gen" : m === "article" ? "news" : m;
+  document.querySelectorAll(".seg button").forEach(x => x.setAttribute("aria-pressed", x.dataset.mode === segMode));
   if (!fromHash && location.hash !== "#" + hashFor(m)) history.pushState(null, "", "#" + hashFor(m));
   render();
-  if (!fromHash) { if (m === "article") $("articlePage").scrollIntoView({ block: "start" }); else window.scrollTo({ top: 0 }); }
+  if (!fromHash) {
+    if (m === "article") $("articlePage").scrollIntoView({ block: "start" });
+    else if (m === "genDetail") $("genPage").scrollIntoView({ block: "start" });
+    else window.scrollTo({ top: 0 });
+  }
 }
 addEventListener("hashchange", () => setMode(modeFromHash(), true));
 addEventListener("popstate", () => setMode(modeFromHash(), true));
@@ -1003,7 +1187,20 @@ $("newsBack").onclick = () => setMode("home");
 document.addEventListener("click", e => {
   const nb = e.target.closest("[data-news]");
   if (nb) { curNewsId = nb.dataset.news; setMode("article"); return; }
-  if (e.target.closest("[data-back]")) setMode("news");
+  if (e.target.closest("[data-back]")) { setMode("news"); return; }
+  const gb = e.target.closest("[data-gen]");
+  if (gb) { curGenKi = +gb.dataset.gen; genMemberSort = "no"; setMode("genDetail"); return; }
+  if (e.target.closest("[data-back-gen]")) setMode("gen");
+});
+$("genPage").addEventListener("click", e => {
+  const b = e.target.closest("[data-ctx]"); if (!b) return;
+  view = ctx[b.dataset.ctx];
+  if (!$("dlg").open) $("dlg").showModal();
+  show(+b.dataset.i);
+  $("dName").focus({ preventScroll: true });
+});
+$("genPage").addEventListener("change", e => {
+  if (e.target.id === "genMemberSort") { genMemberSort = e.target.value; renderGenDetail(); }
 });
 $("home").addEventListener("click", e => {
   if (e.target.closest("#repick")) {
