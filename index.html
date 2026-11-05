@@ -106,6 +106,7 @@ main{padding:24px 0 72px}
 .card .score{font-family:var(--num);font-weight:700;font-size:15px;color:var(--ink)}
 .card .rk{font-family:var(--num);font-weight:700;color:var(--sky-deep)}
 .tag.lead{background:var(--gold);color:#3A2A00}
+.tag.subl{background:var(--surface);color:var(--sky-deep);box-shadow:inset 0 0 0 1.5px var(--sky)}
 
 /* ランキング */
 .ranking{list-style:none;margin:0;padding:0;display:grid;gap:8px}
@@ -241,6 +242,52 @@ button.leader:hover{border-color:var(--sky)}
 
 /* 期の詳細 */
 .pic img{object-position:center top}
+.gen-intro{margin:0;font-size:13px;color:var(--muted);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;white-space:pre-line}
+.gen-subs{display:flex;gap:10px;align-items:baseline;font-size:14px;margin-top:-6px;padding:0 4px}
+.gen-subs small{font-size:12px;color:var(--muted);white-space:nowrap}
+.gp-intro{margin:0;white-space:pre-wrap;line-height:1.9}
+.mlist{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.mrow{width:100%;text-align:left;cursor:pointer;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:10px 18px 10px 10px;
+  display:grid;grid-template-columns:52px minmax(0,1fr) auto;gap:14px;align-items:center}
+.mrow:hover{border-color:var(--sky);box-shadow:0 6px 18px rgba(30,155,215,.12)}
+.mrow .pic{width:52px;height:64px;border-radius:12px}
+.mrow .initial{font-size:22px}
+.m-main{min-width:0}
+.m-no{font-family:var(--num);font-weight:700;font-size:13px;color:var(--muted);margin-right:8px}
+.mrow .name{font-weight:800;font-size:17px;line-height:1.35}
+.mrow .yomi{font-size:12px;color:var(--muted)}
+.m-total{text-align:right;white-space:nowrap}
+.m-total b{display:block;font-family:var(--num);font-weight:700;font-size:17px}
+.m-total small{font-family:var(--num);font-weight:700;color:var(--sky-deep);font-size:12px}
+.mrow.big{grid-template-columns:136px minmax(0,1fr) minmax(230px,36%);gap:22px;padding:16px 22px 16px 16px;border-radius:26px}
+.mrow.big .pic{width:136px;height:170px;border-radius:18px}
+.mrow.big .initial{font-size:58px}
+.mrow.big .name{font-size:28px}
+.mrow.big .yomi{font-size:14px}
+.mrow.lead{border:2px solid var(--gold)}
+.mrow.sub{border:2px solid var(--sky)}
+.role{display:inline-block;font-size:12px;font-weight:800;border-radius:999px;padding:2px 12px;margin-bottom:8px}
+.mrow.lead .role{background:var(--gold);color:#3A2A00}
+.mrow.sub .role{background:var(--sky);color:var(--on-sky)}
+.m-hito{font-size:13px;color:var(--sky-deep);margin-top:8px}
+.m-stats{display:grid;gap:10px;min-width:0}
+.m-stats .tot{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.m-stats .tot span{font-size:12px;color:var(--muted)}
+.m-stats .tot b{font-family:var(--num);font-weight:800;font-size:26px;color:var(--sky-deep);margin-left:auto}
+.m-stats .tot em{font-style:normal;font-family:var(--num);font-weight:700;font-size:13px;color:var(--muted)}
+.five{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px}
+.five div{background:var(--sky-soft);border-radius:10px;padding:5px 2px;text-align:center;min-width:0}
+.five span{display:block;font-size:10px;color:var(--muted);white-space:nowrap;overflow:hidden}
+.five b{font-family:var(--num);font-weight:700;font-size:14px}
+.mgroup{font-size:15px;font-weight:700;color:var(--muted);margin:10px 0 0}
+@media (max-width:620px){
+  .mrow{padding:8px 12px 8px 8px;gap:10px}
+  .mrow.big{grid-template-columns:100px minmax(0,1fr);gap:12px;padding:12px}
+  .mrow.big .pic{width:100px;height:125px}
+  .mrow.big .initial{font-size:42px}
+  .mrow.big .name{font-size:21px}
+  .mrow.big .m-stats{grid-column:1/-1}
+}
 button.gen-head{border:none;width:100%;text-align:left;cursor:pointer;font:inherit}
 button.gen-head:hover{filter:brightness(1.06)}
 .genpage{display:grid;gap:20px;scroll-margin-top:96px}
@@ -275,14 +322,14 @@ button.gp-leader:hover{border-color:var(--sky)}
 .gp-radar svg{width:100%;height:auto;display:block}
 .gp-radar text{font-family:var(--font);font-size:12px;fill:var(--muted)}
 .tops{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:8px}
-.top{display:grid;grid-template-columns:40px minmax(0,1fr) auto;gap:10px;align-items:center;width:100%;text-align:left;cursor:pointer;background:var(--sky-soft);
+.gtop{display:grid;grid-template-columns:40px minmax(0,1fr) auto;gap:10px;align-items:center;width:100%;text-align:left;cursor:pointer;background:var(--sky-soft);
   border:1px solid transparent;border-radius:14px;padding:6px 12px 6px 6px}
-.top:hover{border-color:var(--sky)}
-.top .pic{width:40px;height:48px;border-radius:10px}
-.top .initial{font-size:18px}
-.top small{display:block;font-size:11px;color:var(--muted)}
-.top b{font-weight:700}
-.top .v{font-family:var(--num);font-weight:700;color:var(--sky-deep);white-space:nowrap}
+.gtop:hover{border-color:var(--sky)}
+.gtop .pic{width:40px;height:48px;border-radius:10px}
+.gtop .initial{font-size:18px}
+.gtop small{display:block;font-size:11px;color:var(--muted)}
+.gtop b{font-weight:700}
+.gtop .v{font-family:var(--num);font-weight:700;color:var(--sky-deep);white-space:nowrap}
 .gp-extra{margin:0;display:grid;grid-template-columns:auto 1fr;gap:6px 16px}
 .gp-extra dt{color:var(--muted);font-size:13px}
 .gp-extra dd{margin:0;white-space:pre-wrap}
@@ -372,7 +419,7 @@ dialog::backdrop{background:rgba(6,30,45,.55);backdrop-filter:blur(3px)}
 .ranks span{display:block;font-size:12px;color:var(--muted)}
 .ranks b{font-family:var(--num);font-weight:700;font-size:18px}
 .ranks em{font-style:normal;font-family:var(--num);font-weight:700;color:var(--sky-deep);margin-left:6px}
-.ranks .top em{color:var(--gold)}
+.ranks .rank-top em{color:var(--gold)}
 .prof p{margin:0;white-space:pre-wrap}
 .prof .blank{color:var(--muted)}
 .prof .desc{margin-bottom:12px}
@@ -528,7 +575,7 @@ dialog::backdrop{background:rgba(6,30,45,.55);backdrop-filter:blur(3px)}
 
 <script>
 // ▼ Apps Script を「ウェブアプリ」としてデプロイしたときのURL（最後が /exec）に置き換えてください
-const API_URL = "https://script.google.com/macros/s/AKfycby128yclCBR_ysfSZTxf9K8OPTTSt2BUdj8P21nNRkxwJB0aaFVviKpbeKmJuH_M2rxdg/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbz90RD6VVkdbOPm2WnNko8ddkVJPaMy9F2l_NUbBF5oQFbLszIsbJPs4fKa9R3j8dqZjg/exec";
 
 const STAT_NAMES = ["体力","パワー","ガード","コミュ力","学力"];
 const METRICS = [
@@ -651,7 +698,7 @@ function renderBday(){
       <span class="pic">${pic(c)}<span class="badge">No.${c.no}</span><span class="countdown">${d === 0 ? "今日！" : d === 1 ? "明日" : `あと${d}日`}</span></span>
       <span class="body">
         <span class="info">
-          <span class="tags"><span class="tag ki">${c.ki}期生</span>${c.team ? `<span class="tag team">${esc(c.team)}</span>` : ""}${c.isLeader ? `<span class="tag lead">リーダー</span>` : ""}</span>
+          <span class="tags"><span class="tag ki">${c.ki}期生</span>${c.team ? `<span class="tag team">${esc(c.team)}</span>` : ""}${c.isLeader ? `<span class="tag lead">リーダー</span>` : ""}${c.isSub ? `<span class="tag subl">サブリーダー</span>` : ""}</span>
           <span class="name fit">${esc(c.name)}</span>
           <span class="yomi fit">${esc(c.yomi)}</span>
         </span>
@@ -762,9 +809,16 @@ function renderGenDetail(){
   }
   const g = gens[i], prev = gens[i - 1], next = gens[i + 1];
   document.title = `${g.ki}期生｜松電キャラクターズ図鑑`;
-  const ms = [...g.members].sort(genMemberSort === "total" ? sorters.total : genMemberSort === "bday" ? sorters.bday : sorters.no);
-  ctx.genMembers = ms;
-  const idx = c => ms.indexOf(c);
+
+  // 並び：リーダー → サブリーダー → 一般メンバー
+  const L = g.leader;
+  const subs = g.subList.map(x => x.c).filter(c => c && c !== L);
+  const heads = [L, ...subs].filter(Boolean);
+  const others = g.members.filter(c => !heads.includes(c))
+    .sort(genMemberSort === "total" ? sorters.total : genMemberSort === "bday" ? sorters.bday : sorters.no);
+  const ordered = [...heads, ...others];
+  ctx.genMembers = ordered;
+  const idx = c => ordered.indexOf(c);
 
   // 加入日の範囲・所属の内訳
   const added = g.members.map(c => c.added).filter(Boolean).sort();
@@ -772,45 +826,53 @@ function renderGenDetail(){
   const teamCount = {};
   g.members.forEach(c => { if (c.team) teamCount[c.team] = (teamCount[c.team] || 0) + 1; });
   const teamText = Object.entries(teamCount).map(([t, n]) => `${esc(t)} ${n}人`).join("、");
+  const leaderText = L ? esc(L.name) : (g.leaderName ? esc(g.leaderName) : "");
+  const subText = g.subList.map(x => esc(x.c ? x.c.name : x.name)).join("、");
 
-  // リーダー
-  const L = g.leader;
-  let leader;
-  if (L) {
-    const inGen = idx(L) >= 0;
-    if (!inGen) ctx.genLeader = [L];
-    leader = `<button class="gp-leader" type="button" data-ctx="${inGen ? "genMembers" : "genLeader"}" data-i="${inGen ? idx(L) : 0}">
-      <span class="pic">${pic(L)}</span><span class="who"><small>リーダー</small><b class="fit">${esc(L.name)}</b><span class="y fit">${esc(L.yomi)}　No.${L.no}</span></span></button>`;
-  } else {
-    leader = `<div class="gp-leader"><span class="pic"><span class="initial">?</span></span><span class="who"><small>リーダー</small><b class="fit">${g.leaderName ? esc(g.leaderName) : "未設定"}</b></span></div>`;
-  }
-
-  // 全体平均との比較
   const allAvg = STAT_NAMES.map((_, k) => chars.reduce((a, c) => a + c.stats[k], 0) / chars.length);
-
-  // 項目別トップ
   const tops = METRICS.map(m => {
     const t = g.members.reduce((a, c) => m.get(c) > m.get(a) ? c : a, g.members[0]);
-    return `<button class="top" type="button" data-ctx="genMembers" data-i="${idx(t)}">
+    return `<button class="gtop" type="button" data-ctx="genMembers" data-i="${idx(t)}">
       <span class="pic">${pic(t)}</span><span class="who"><small>${m.label}</small><b class="fit">${esc(t.name)}</b></span><span class="v">${m.fmt(m.get(t))}</span></button>`;
   }).join("");
-
   const extra = Object.entries(g.extra);
-  const memberCard = (c, k) => miniCard(c, "genMembers", k, "",
-    `<span class="foot"><span class="flabel">合計能力値</span><span class="score">${c.total.toFixed(2)}</span><span class="rk">${c.ranks.total}位</span>
-      <span class="bar"><i style="width:${(Math.max(0, c.total) / maxOf.total * 100).toFixed(1)}%"></i></span></span>`);
+
+  // リーダー・サブリーダー（大きく表示）
+  const bigRow = (c, role, cls) => `<li><button class="mrow big ${cls}" type="button" data-ctx="genMembers" data-i="${idx(c)}">
+    <span class="pic">${pic(c)}</span>
+    <span class="m-main">
+      <span class="role">${role}</span>
+      <span class="fit"><span class="m-no">No.${c.no}</span>${c.team ? `<span class="tag team">${esc(c.team)}</span>` : ""}</span>
+      <span class="name fit">${esc(c.name)}</span>
+      <span class="yomi fit">${esc(c.yomi)}</span>
+      ${c.hitokoto ? `<span class="m-hito fit">「${esc(c.hitokoto)}」</span>` : ""}
+    </span>
+    <span class="m-stats">
+      <span class="tot"><span>合計能力値</span><b>${c.total.toFixed(2)}</b><em>${c.ranks.total}位</em></span>
+      <span class="five">${STAT_NAMES.map((n, k) => `<div><span>${n}</span><b>${c.stats[k]}</b></div>`).join("")}</span>
+    </span>
+  </button></li>`;
+  // 一般メンバー
+  const row = c => `<li><button class="mrow" type="button" data-ctx="genMembers" data-i="${idx(c)}">
+    <span class="pic">${pic(c)}</span>
+    <span class="m-main"><span class="name fit"><span class="m-no">No.${c.no}</span>${esc(c.name)}</span><span class="yomi fit">${esc(c.yomi)}${c.team ? "　" + esc(c.team) : ""}</span></span>
+    <span class="m-total"><b>${c.total.toFixed(2)}</b><small>合計 ${c.ranks.total}位</small></span>
+  </button></li>`;
+  const headRows = (L ? bigRow(L, "リーダー", "lead") : "") + subs.map(c => bigRow(c, "サブリーダー", "sub")).join("");
 
   $("genPage").innerHTML = `${back}
     <div class="gp-hero">
       <span class="gen-no">${g.ki}<small>期生</small></span>
       <div>
         <div class="gp-team${g.team ? "" : " unset"}">${g.team ? esc(g.team) : "愛称未設定"}</div>
-        <div class="gp-meta">メンバー ${g.count}人${addedText ? `　加入日 ${esc(addedText)}` : ""}${teamText ? `　所属 ${teamText}` : ""}</div>
+        <div class="gp-meta">メンバー ${g.count}人${leaderText ? `　リーダー ${leaderText}` : ""}${subText ? `　サブリーダー ${subText}` : ""}</div>
+        <div class="gp-meta">${addedText ? `加入日 ${esc(addedText)}` : ""}${teamText ? `　所属 ${teamText}` : ""}</div>
       </div>
     </div>
+    ${g.intro ? `<div class="panel"><h3>${g.ki}期生の紹介</h3><p class="gp-intro">${linkify(g.intro)}</p></div>` : ""}
     <div class="gp-grid">
       <div class="panel">
-        ${leader}
+        <h3>平均データ</h3>
         <div class="kpis">
           <div class="main"><span>平均合計能力値</span><b>${fmt2(g.avgTotal)}</b><em>${gens.length}期中 ${g.rank}位</em></div>
           <div><span>平均5ステ計</span><b>${fmt1(g.avgSum5)}</b></div>
@@ -831,13 +893,14 @@ function renderGenDetail(){
     ${extra.length ? `<div class="panel"><h3>期のデータ</h3><dl class="gp-extra">${extra.map(([k, v]) => `<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join("")}</dl></div>` : ""}
     <div class="members-head">
       <h2>メンバー（${g.count}人）</h2>
-      <select id="genMemberSort" aria-label="メンバーの並び順">
+      <select id="genMemberSort" aria-label="一般メンバーの並び順">
         <option value="no"${genMemberSort === "no" ? " selected" : ""}>番号順</option>
         <option value="total"${genMemberSort === "total" ? " selected" : ""}>合計能力値が高い順</option>
         <option value="bday"${genMemberSort === "bday" ? " selected" : ""}>誕生日順（1月から）</option>
       </select>
     </div>
-    <ul class="grid">${ms.map(memberCard).join("")}</ul>
+    ${headRows ? `<ol class="mlist">${headRows}</ol>` : ""}
+    ${others.length ? `${headRows ? `<h3 class="mgroup">一般メンバー（${others.length}人）</h3>` : ""}<ol class="mlist">${others.map(row).join("")}</ol>` : ""}
     <nav class="article-nav" aria-label="ほかの期">
       ${prev ? `<button type="button" data-gen="${prev.ki}"><small>← 前の期</small><b>${prev.ki}期生${prev.team ? "「" + esc(prev.team) + "」" : ""}</b></button>` : ""}
       ${next ? `<button class="older" type="button" data-gen="${next.ki}"><small>次の期 →</small><b>${next.ki}期生${next.team ? "「" + esc(next.team) + "」" : ""}</b></button>` : ""}
@@ -859,7 +922,7 @@ function dailyPick(){
   let x = seed; x = ((x >>> 16) ^ x) * 0x45d9f3b; x = ((x >>> 16) ^ x) >>> 0;   // 日付から毎日変わる番号
   return x % chars.length;
 }
-const cardTags = c => `<span class="tags"><span class="tag ki">${c.ki}期生</span>${c.team ? `<span class="tag team">${esc(c.team)}</span>` : ""}${c.isLeader ? `<span class="tag lead">リーダー</span>` : ""}</span>`;
+const cardTags = c => `<span class="tags"><span class="tag ki">${c.ki}期生</span>${c.team ? `<span class="tag team">${esc(c.team)}</span>` : ""}${c.isLeader ? `<span class="tag lead">リーダー</span>` : ""}${c.isSub ? `<span class="tag subl">サブリーダー</span>` : ""}</span>`;
 const miniCard = (c, ctxName, i, overlay, foot, extraClass) => `<li><button class="card${extraClass || ""}" type="button" data-ctx="${ctxName}" data-i="${i}">
   <span class="pic">${pic(c)}<span class="badge">No.${c.no}</span>${overlay || ""}</span>
   <span class="body"><span class="info">${cardTags(c)}<span class="name fit">${esc(c.name)}</span><span class="yomi fit">${esc(c.yomi)}</span></span>${foot}</span>
@@ -949,9 +1012,12 @@ function buildGens(kis, genList){
     const avg = f => ms.reduce((a, c) => a + f(c), 0) / ms.length;
     const leader = g.leader ? (ms.find(c => norm(c.name) === norm(g.leader)) || chars.find(c => norm(c.name) === norm(g.leader))) : null;
     if (leader) leader.isLeader = true;
+    const findChar = name => ms.find(c => norm(c.name) === norm(name)) || chars.find(c => norm(c.name) === norm(name)) || null;
+    const subList = (g.subLeaders || []).map(name => ({ name, c: findChar(name) }));
+    subList.forEach(x => { if (x.c) x.c.isSub = true; });
     ms.forEach(c => c.genTeam = g.team || "");
     return {
-      ki: k, team: g.team || "", leaderName: g.leader || "", leader, extra: g.extra || {}, count: ms.length,
+      ki: k, team: g.team || "", leaderName: g.leader || "", leader, subList, intro: g.intro || "", extra: g.extra || {}, count: ms.length,
       avgTotal: avg(c => c.total), avgSum5: avg(c => c.sum5), avgStats: STAT_NAMES.map((_, i) => avg(c => c.stats[i])),
       avgIq: avg(c => c.iq), avgHeight: avg(c => c.height), avgAge: avg(c => c.age), avgWeight: avg(c => c.weight), members: ms,
       top: ms.reduce((a, c) => c.total > a.total ? c : a, ms[0])
@@ -976,7 +1042,10 @@ function genCard(g){
       <span class="gen-count">${g.count}人</span>
     </button>
     <div class="gen-body">
+      ${g.intro ? `<p class="gen-intro">${esc(g.intro)}</p>` : ""}
       ${leader}
+      ${g.subList.length ? `<div class="gen-subs"><small>サブリーダー</small><span>${g.subList.map(x => x.c
+        ? `<button class="link" type="button" data-char="${x.c.no}">${esc(x.c.name)}</button>` : esc(x.name)).join("、")}</span></div>` : ""}
       <div class="avg-total"><span>平均合計能力値</span><b>${fmt2(g.avgTotal)}</b><em>${gens.length}期中 ${g.rank}位</em></div>
       <div class="avg-stats">${STAT_NAMES.map((n, i) =>
         `<span class="lbl">平均${n}</span><span class="bar"><i style="width:${(g.avgStats[i] / gens.statMax[i] * 100).toFixed(1)}%"></i></span><span class="v">${Math.round(g.avgStats[i])}</span>`).join("")}</div>
@@ -1062,7 +1131,7 @@ function render(){
         <span class="pic">${pic(c)}<span class="badge">No.${c.no}</span></span>
         <span class="body">
           <span class="info">
-            <span class="tags"><span class="tag ki">${c.ki}期生</span>${c.team ? `<span class="tag team">${esc(c.team)}</span>` : ""}${c.isLeader ? `<span class="tag lead">リーダー</span>` : ""}</span>
+            <span class="tags"><span class="tag ki">${c.ki}期生</span>${c.team ? `<span class="tag team">${esc(c.team)}</span>` : ""}${c.isLeader ? `<span class="tag lead">リーダー</span>` : ""}${c.isSub ? `<span class="tag subl">サブリーダー</span>` : ""}</span>
             <span class="name fit">${esc(c.name)}</span>
             <span class="yomi fit">${esc(c.yomi)}</span>
           </span>
@@ -1113,7 +1182,7 @@ function show(i){
   cur = (i + view.length) % view.length;
   const c = view[cur];
   $("dImg").innerHTML = c.image ? `<img src="${esc(c.image)}" alt="${esc(c.name)}" data-fallback="${esc(initial(c))}">` : `<span class="initial">${esc(initial(c))}</span>`;
-  $("dTags").innerHTML = `<span class="tag ki">${c.ki}期生${c.genTeam ? "「" + esc(c.genTeam) + "」" : ""}</span>${c.team ? `<span class="tag team">${esc(c.team)}</span>` : ""}${c.isLeader ? `<span class="tag lead">リーダー</span>` : ""}`;
+  $("dTags").innerHTML = `<span class="tag ki">${c.ki}期生${c.genTeam ? "「" + esc(c.genTeam) + "」" : ""}</span>${c.team ? `<span class="tag team">${esc(c.team)}</span>` : ""}${c.isLeader ? `<span class="tag lead">リーダー</span>` : ""}${c.isSub ? `<span class="tag subl">サブリーダー</span>` : ""}`;
   $("dNo").textContent = `No.${c.no}`;
   $("dName").textContent = c.name;
   $("dYomi").textContent = c.yomi;
@@ -1128,7 +1197,7 @@ function show(i){
     <dt>IQ</dt><dd>${c.iq}</dd>
     <dt>追加日</dt><dd>${esc(c.added)}</dd>`;
   $("dRanks").innerHTML = METRICS.map(m =>
-    `<div class="${c.ranks[m.key] <= 3 ? "top" : ""}"><span>${m.label}</span><b>${m.fmt(m.get(c))}</b><em>${c.ranks[m.key]}位</em></div>`).join("");
+    `<div class="${c.ranks[m.key] <= 3 ? "rank-top" : ""}"><span>${m.label}</span><b>${m.fmt(m.get(c))}</b><em>${c.ranks[m.key]}位</em></div>`).join("");
   $("dProf").innerHTML = `
     <div class="desc"><h3>キャラクター説明</h3>${txt(c.description)}</div>
     <div class="likes"><div><h3>好きなこと</h3>${txt(c.likes)}</div><div><h3>嫌いなこと</h3>${txt(c.dislikes)}</div></div>`;
