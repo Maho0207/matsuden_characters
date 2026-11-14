@@ -136,6 +136,14 @@ main{padding:24px 0 72px}
 .gen-no{font-family:var(--num);font-weight:800;font-size:42px;line-height:.9;white-space:nowrap}
 .gen-no small{font-family:var(--font);font-size:14px;font-weight:700;margin-left:2px}
 .gen-team{flex:1;min-width:0;font-weight:800;font-size:18px;line-height:1.3}
+.gen-team.team-name{font-size:22px;padding:4px 0}
+.team-id{font-family:var(--num);font-weight:800;font-size:42px;line-height:.9;white-space:nowrap}
+.team-id small{font-family:var(--font);font-size:13px;font-weight:700;margin-right:4px;opacity:.9}
+.gp-hero .team-id{font-size:68px}
+.id-chip{font-family:var(--num);font-weight:700;font-size:12px;color:var(--muted);margin-left:6px;white-space:nowrap}
+@media (max-width:620px){.gp-hero .team-id{font-size:50px}}
+.gp-label{font-size:13px;font-weight:700;opacity:.85;letter-spacing:.06em}
+.gp-teamname{font-size:clamp(28px,5vw,40px)}
 .gen-team.unset{opacity:.75;font-weight:500;font-size:13px}
 .gen-count{font-size:13px;opacity:.92;white-space:nowrap}
 .gen-body{padding:16px 18px;display:grid;gap:14px;flex:1;align-content:start}
@@ -431,8 +439,8 @@ dialog::backdrop{background:rgba(6,30,45,.55);backdrop-filter:blur(3px)}
 .d-foot .close{margin-left:auto;background:var(--sky);border-color:var(--sky);color:var(--on-sky);font-weight:700}
 @media (max-width:620px){
   .controls{position:static}
-  .seg{display:flex;width:100%;overflow-x:auto}
-  .seg button{flex:1 0 auto;padding:7px 9px;font-size:14px}
+  .seg{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));width:100%;border-radius:18px;gap:2px}
+  .seg button{padding:7px 4px;font-size:14px;border-radius:14px}
   .d-no{font-size:26px}
   .d-head h2{font-size:26px}
   .d-head{padding:20px 20px 0}
@@ -474,6 +482,7 @@ dialog::backdrop{background:rgba(6,30,45,.55);backdrop-filter:blur(3px)}
     <button type="button" data-mode="cards" aria-pressed="false">図鑑</button>
     <button type="button" data-mode="rank" aria-pressed="false">ランキング</button>
     <button type="button" data-mode="gen" aria-pressed="false">期データ</button>
+    <button type="button" data-mode="team" aria-pressed="false">所属</button>
     <button type="button" data-mode="bday" aria-pressed="false">誕生日</button>
   </div>
   <input id="q" type="search" placeholder="名前・よみ・所属などで探す" aria-label="名前・よみ・所属などで探す">
@@ -495,6 +504,7 @@ dialog::backdrop{background:rgba(6,30,45,.55);backdrop-filter:blur(3px)}
   <ul class="grid" id="grid"></ul>
   <ol class="ranking" id="ranking" hidden></ol>
   <ul class="gens" id="gens" hidden></ul>
+  <ul class="gens" id="teams" hidden></ul>
   <div class="home" id="home" hidden>
     <section id="newsSec" hidden>
       <div class="sec-head"><h2>お知らせ</h2><button class="more" type="button" data-go="news" id="newsMore">すべてのお知らせ →</button></div>
@@ -575,7 +585,7 @@ dialog::backdrop{background:rgba(6,30,45,.55);backdrop-filter:blur(3px)}
 
 <script>
 // ▼ Apps Script を「ウェブアプリ」としてデプロイしたときのURL（最後が /exec）に置き換えてください
-const API_URL = "https://script.google.com/macros/s/AKfycbz90RD6VVkdbOPm2WnNko8ddkVJPaMy9F2l_NUbBF5oQFbLszIsbJPs4fKa9R3j8dqZjg/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbwvtpoyiNdCUSyqyXbm3hGMj5KECri2NzqnrWJmNaYe5546KXWUCPDTg7p2BEB9y6uy6Q/exec";
 
 const STAT_NAMES = ["体力","パワー","ガード","コミュ力","学力"];
 const METRICS = [
@@ -595,7 +605,7 @@ const pic = c => c.image
   : `<span class="initial" aria-hidden="true">${esc(initial(c))}</span>`;
 const txt = s => s ? `<p>${esc(s)}</p>` : `<p class="blank">未登録</p>`;
 
-let chars = [], gens = [], news = [], view = [], maxOf = {}, radarMax = 2000, cur = 0, mode = "home", rankKey = "total";
+let chars = [], gens = [], teamGroups = [], news = [], view = [], maxOf = {}, radarMax = 2000, cur = 0, mode = "home", rankKey = "total";
 
 /* 並び順 */
 const sorters = {
@@ -627,7 +637,7 @@ async function load(){
     if (!res.ok) throw new Error(`データを取得できませんでした（HTTP ${res.status}）。少し待ってから再読み込みしてください。`);
     const json = await res.json();
     if (json.error) throw new Error("スプレッドシートを読み取れませんでした: " + json.error);
-    build(json.characters || [], json.generations || [], json.news || []);
+    build(json.characters || [], json.generations || [], json.news || [], json.teams || []);
     setStatus("");
   } catch (e) {
     setStatus(e instanceof SyntaxError || e instanceof TypeError
@@ -636,7 +646,7 @@ async function load(){
   }
 }
 
-function build(list, genList, newsList){
+function build(list, genList, newsList, teamList){
   news = newsList || [];
   const today = new Date();
   chars = list.map(c => {
@@ -657,14 +667,15 @@ function build(list, genList, newsList){
   const kis = [...new Set(chars.map(c => c.ki))].sort((a, b) => a - b);
   const teams = [...new Set(chars.map(c => c.team).filter(Boolean))].sort((a, b) => a.localeCompare(b, "ja"));
   buildGens(kis, genList);
+  buildTeams(teamList);
   $("lead").textContent = "プロフィールと能力値をまとめたキャラクター図鑑。気になるキャラクターを選ぶと詳しいデータが見られます。";
-  $("heroStats").innerHTML = `<div><b>${chars.length}</b><span>キャラクター</span></div><div><b>${kis.length ? kis[kis.length-1] : 0}</b><span>期</span></div><div><b>${teams.length}</b><span>所属</span></div>`;
+  $("heroStats").innerHTML = `<div><b>${chars.length}</b><span>キャラクター</span></div><div><b>${kis.length ? kis[kis.length-1] : 0}</b><span>期</span></div><div><b>${teamGroups.length}</b><span>所属</span></div>`;
   $("heroStats").hidden = false;
   const keepKi = $("ki").value, keepTeam = $("team").value;
   $("ki").innerHTML = `<option value="">すべての期</option>` +
     kis.map(k => `<option value="${k}">${k}期生（${chars.filter(c => c.ki === k).length}人）</option>`).join("");
   $("team").innerHTML = `<option value="">すべての所属</option>` +
-    teams.map(t => `<option value="${esc(t)}">${esc(t)}（${chars.filter(c => c.team === t).length}人）</option>`).join("") +
+    teamGroups.map(g => `<option value="${esc(g.key)}">${g.id ? `ID ${esc(g.id)}：` : ""}${esc(g.name)}（${g.count}人）</option>`).join("") +
     `<option value="__none">所属なし（${chars.filter(c => !c.team).length}人）</option>`;
   if (kis.includes(+keepKi)) $("ki").value = keepKi;
   if ([...$("team").options].some(o => o.value === keepTeam)) $("team").value = keepTeam;
@@ -698,7 +709,7 @@ function renderBday(){
       <span class="pic">${pic(c)}<span class="badge">No.${c.no}</span><span class="countdown">${d === 0 ? "今日！" : d === 1 ? "明日" : `あと${d}日`}</span></span>
       <span class="body">
         <span class="info">
-          <span class="tags"><span class="tag ki">${c.ki}期生</span>${c.team ? `<span class="tag team">${esc(c.team)}</span>` : ""}${c.isLeader ? `<span class="tag lead">リーダー</span>` : ""}${c.isSub ? `<span class="tag subl">サブリーダー</span>` : ""}</span>
+          <span class="tags"><span class="tag ki">${c.ki}期生</span>${c.team ? `<span class="tag team">${esc(c.teamGroup ? c.teamGroup.name : c.team)}</span>` : ""}${c.isLeader ? `<span class="tag lead">リーダー</span>` : ""}${c.isSub ? `<span class="tag subl">サブリーダー</span>` : ""}</span>
           <span class="name fit">${esc(c.name)}</span>
           <span class="yomi fit">${esc(c.yomi)}</span>
         </span>
@@ -779,11 +790,11 @@ function renderArticle(){
     </nav>`;
 }
 
-/* 期の詳細 */
-let curGenKi = 0, genMemberSort = "no";
-function radarCompare(a, b){
-  // 外周＝全ての期の平均ステータスの最大値（250単位で切り上げ）。キャラ単体より値が小さいので専用の目盛りにする
-  const peak = Math.max(...gens.flatMap(x => x.avgStats), ...b, 1);
+/* 期・所属の詳細 */
+let curGenKi = 0, curTeamKey = "", genMemberSort = "no";
+function radarCompare(a, b, list){
+  // 外周＝期（所属）の平均ステータスの最大値（250単位で切り上げ）
+  const peak = Math.max(...list.flatMap(x => x.avgStats), ...b, 1);
   const S = 300, cx = S/2, cy = S/2 + 4, R = 100, MAX = Math.ceil(peak / 250) * 250;
   const pt = (i, r) => { const ang = -Math.PI/2 + i*2*Math.PI/5; return [cx + r*Math.cos(ang), cy + r*Math.sin(ang)]; };
   const poly = vals => vals.map((v, i) => pt(i, R*Math.max(0, Math.min(v, MAX))/MAX).join(",")).join(" ");
@@ -796,23 +807,25 @@ function radarCompare(a, b){
     const [x,y] = pt(i, R + 28);
     g += `<text x="${x}" y="${y-4}" text-anchor="middle">${STAT_NAMES[i]}</text><text x="${x}" y="${y+12}" text-anchor="middle" style="fill:var(--ink);font-weight:700">${Math.round(v)}</text>`;
   });
-  return `<svg viewBox="0 0 ${S} ${S+6}" role="img" aria-label="期の平均ステータスと全体平均の比較">${g}</svg>`;
+  return `<svg viewBox="0 0 ${S} ${S+6}" role="img" aria-label="平均ステータスと全体平均の比較">${g}</svg>`;
 }
 
-function renderGenDetail(){
+function renderGroupDetail(kind){
   $("count").textContent = "";
-  const back = `<div><button class="more" type="button" data-back-gen>← 期データ一覧へ</button></div>`;
-  const i = gens.findIndex(g => g.ki === curGenKi);
+  const isGen = kind === "gen", list = groupList(kind), unit = unitLabel(kind);
+  const back = `<div><button class="more" type="button" ${isGen ? "data-back-gen" : "data-back-team"}>← ${isGen ? "期データ" : "所属データ"}一覧へ</button></div>`;
+  const i = list.findIndex(g => isGen ? g.ki === curGenKi : g.key === curTeamKey);
   if (i < 0) {
-    $("genPage").innerHTML = back + `<div class="panel"><p class="news-empty">${chars.length ? "この期のデータは見つかりませんでした。" : "読み込んでいます…"}</p></div>`;
+    $("genPage").innerHTML = back + `<div class="panel"><p class="news-empty">${chars.length ? `この${unit}のデータは見つかりませんでした。` : "読み込んでいます…"}</p></div>`;
     return;
   }
-  const g = gens[i], prev = gens[i - 1], next = gens[i + 1];
-  document.title = `${g.ki}期生｜松電キャラクターズ図鑑`;
+  const g = list[i], prev = list[i - 1], next = list[i + 1];
+  const title = groupTitle(g);
+  document.title = `${title}｜松電キャラクターズ図鑑`;
 
-  // 並び：リーダー → サブリーダー → 一般メンバー
+  // 並び：リーダー → サブリーダー → 一般メンバー（リーダーなどがこのまとまりの外の人でも上に表示）
   const L = g.leader;
-  const subs = g.subList.map(x => x.c).filter(c => c && c !== L);
+  const subs = g.subList.map(x => x.c).filter((c, k, arr) => c && c !== L && arr.indexOf(c) === k);
   const heads = [L, ...subs].filter(Boolean);
   const others = g.members.filter(c => !heads.includes(c))
     .sort(genMemberSort === "total" ? sorters.total : genMemberSort === "bday" ? sorters.bday : sorters.no);
@@ -820,29 +833,28 @@ function renderGenDetail(){
   ctx.genMembers = ordered;
   const idx = c => ordered.indexOf(c);
 
-  // 加入日の範囲・所属の内訳
   const added = g.members.map(c => c.added).filter(Boolean).sort();
   const addedText = added.length ? (added[0] === added[added.length - 1] ? added[0] : `${added[0]} 〜 ${added[added.length - 1]}`) : "";
-  const teamCount = {};
-  g.members.forEach(c => { if (c.team) teamCount[c.team] = (teamCount[c.team] || 0) + 1; });
-  const teamText = Object.entries(teamCount).map(([t, n]) => `${esc(t)} ${n}人`).join("、");
+  // 期なら所属の内訳、所属なら期の内訳
+  const breakdown = {};
+  g.members.forEach(c => { const k = isGen ? c.team : `${c.ki}期生`; if (k) breakdown[k] = (breakdown[k] || 0) + 1; });
+  const bdEntries = Object.entries(breakdown);
+  if (!isGen) bdEntries.sort((a, b) => parseInt(a[0]) - parseInt(b[0]));
+  const bdText = bdEntries.map(([t, n]) => `${esc(t)} ${n}人`).join("、");
   const leaderText = L ? esc(L.name) : (g.leaderName ? esc(g.leaderName) : "");
   const subText = g.subList.map(x => esc(x.c ? x.c.name : x.name)).join("、");
 
   const allAvg = STAT_NAMES.map((_, k) => chars.reduce((a, c) => a + c.stats[k], 0) / chars.length);
-  const tops = METRICS.map(m => {
-    const t = g.members.reduce((a, c) => m.get(c) > m.get(a) ? c : a, g.members[0]);
-    return `<button class="gtop" type="button" data-ctx="genMembers" data-i="${idx(t)}">
-      <span class="pic">${pic(t)}</span><span class="who"><small>${m.label}</small><b class="fit">${esc(t.name)}</b></span><span class="v">${m.fmt(m.get(t))}</span></button>`;
-  }).join("");
   const extra = Object.entries(g.extra);
 
-  // リーダー・サブリーダー（大きく表示）
+  // 役職の表示：期の詳細なら所属名、所属の詳細なら期
+  const sideTag = c => isGen ? (c.team ? `<span class="tag team">${esc(teamName(c))}</span>` : "") : `<span class="tag ki">${c.ki}期生</span>`;
+  const sideText = c => isGen ? (c.team ? "　" + esc(teamName(c)) : "") : `　${c.ki}期生`;
   const bigRow = (c, role, cls) => `<li><button class="mrow big ${cls}" type="button" data-ctx="genMembers" data-i="${idx(c)}">
     <span class="pic">${pic(c)}</span>
     <span class="m-main">
       <span class="role">${role}</span>
-      <span class="fit"><span class="m-no">No.${c.no}</span>${c.team ? `<span class="tag team">${esc(c.team)}</span>` : ""}</span>
+      <span class="fit"><span class="m-no">No.${c.no}</span>${sideTag(c)}</span>
       <span class="name fit">${esc(c.name)}</span>
       <span class="yomi fit">${esc(c.yomi)}</span>
       ${c.hitokoto ? `<span class="m-hito fit">「${esc(c.hitokoto)}」</span>` : ""}
@@ -852,29 +864,19 @@ function renderGenDetail(){
       <span class="five">${STAT_NAMES.map((n, k) => `<div><span>${n}</span><b>${c.stats[k]}</b></div>`).join("")}</span>
     </span>
   </button></li>`;
-  // 一般メンバー
   const row = c => `<li><button class="mrow" type="button" data-ctx="genMembers" data-i="${idx(c)}">
     <span class="pic">${pic(c)}</span>
-    <span class="m-main"><span class="name fit"><span class="m-no">No.${c.no}</span>${esc(c.name)}</span><span class="yomi fit">${esc(c.yomi)}${c.team ? "　" + esc(c.team) : ""}</span></span>
+    <span class="m-main"><span class="name fit"><span class="m-no">No.${c.no}</span>${esc(c.name)}</span><span class="yomi fit">${esc(c.yomi)}${sideText(c)}</span></span>
     <span class="m-total"><b>${c.total.toFixed(2)}</b><small>合計 ${c.ranks.total}位</small></span>
   </button></li>`;
   const headRows = (L ? bigRow(L, "リーダー", "lead") : "") + subs.map(c => bigRow(c, "サブリーダー", "sub")).join("");
 
-  $("genPage").innerHTML = `${back}
-    <div class="gp-hero">
-      <span class="gen-no">${g.ki}<small>期生</small></span>
-      <div>
-        <div class="gp-team${g.team ? "" : " unset"}">${g.team ? esc(g.team) : "愛称未設定"}</div>
-        <div class="gp-meta">メンバー ${g.count}人${leaderText ? `　リーダー ${leaderText}` : ""}${subText ? `　サブリーダー ${subText}` : ""}</div>
-        <div class="gp-meta">${addedText ? `加入日 ${esc(addedText)}` : ""}${teamText ? `　所属 ${teamText}` : ""}</div>
-      </div>
-    </div>
-    ${g.intro ? `<div class="panel"><h3>${g.ki}期生の紹介</h3><p class="gp-intro">${linkify(g.intro)}</p></div>` : ""}
+  const stats = g.count ? `
     <div class="gp-grid">
       <div class="panel">
         <h3>平均データ</h3>
         <div class="kpis">
-          <div class="main"><span>平均合計能力値</span><b>${fmt2(g.avgTotal)}</b><em>${gens.length}期中 ${g.rank}位</em></div>
+          <div class="main"><span>平均合計能力値</span><b>${fmt2(g.avgTotal)}</b><em>${list.ranked}${unit}中 ${g.rank}位</em></div>
           <div><span>平均5ステ計</span><b>${fmt1(g.avgSum5)}</b></div>
           <div><span>平均IQ</span><b>${fmt1(g.avgIq)}</b></div>
           <div><span>平均身長</span><b>${fmt1(g.avgHeight)}</b><em>cm</em></div>
@@ -885,31 +887,51 @@ function renderGenDetail(){
       </div>
       <div class="panel">
         <h3>平均ステータス</h3>
-        <div class="gp-radar">${radarCompare(g.avgStats, allAvg)}</div>
-        <div class="legend"><span><i></i>${g.ki}期生の平均</span><span><i class="all"></i>全体の平均</span></div>
+        <div class="gp-radar">${radarCompare(g.avgStats, allAvg, list)}</div>
+        <div class="legend"><span><i></i>${esc(title)}の平均</span><span><i class="all"></i>全体の平均</span></div>
       </div>
     </div>
-    <div class="panel"><h3>項目別トップ</h3><div class="tops">${tops}</div></div>
-    ${extra.length ? `<div class="panel"><h3>期のデータ</h3><dl class="gp-extra">${extra.map(([k, v]) => `<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join("")}</dl></div>` : ""}
+    <div class="panel"><h3>項目別トップ</h3><div class="tops">${METRICS.map(m => {
+      const t = g.members.reduce((a, c) => m.get(c) > m.get(a) ? c : a, g.members[0]);
+      return `<button class="gtop" type="button" data-ctx="genMembers" data-i="${idx(t)}">
+        <span class="pic">${pic(t)}</span><span class="who"><small>${m.label}</small><b class="fit">${esc(t.name)}</b></span><span class="v">${m.fmt(m.get(t))}</span></button>`;
+    }).join("")}</div></div>` : "";
+
+  const navLabel = x => x.kind === "gen" ? `${x.ki}期生${x.team ? "「" + esc(x.team) + "」" : ""}` : `${x.id ? `ID ${esc(x.id)}　` : ""}${esc(x.name)}`;
+  $("genPage").innerHTML = `${back}
+    <div class="gp-hero">
+      ${isGen ? `<span class="gen-no">${g.ki}<small>期生</small></span>` : g.id ? `<span class="team-id"><small>ID</small>${esc(g.id)}</span>` : ""}
+      <div>
+        ${isGen ? `<div class="gp-team${g.team ? "" : " unset"}">${g.team ? esc(g.team) : "愛称未設定"}</div>` : `<div class="gp-label">所属</div><div class="gp-team gp-teamname">${esc(g.name)}</div>`}
+        <div class="gp-meta">メンバー ${g.count}人${leaderText ? `　リーダー ${leaderText}` : ""}${subText ? `　サブリーダー ${subText}` : ""}</div>
+        ${addedText || bdText ? `<div class="gp-meta">${addedText ? `加入日 ${esc(addedText)}` : ""}${bdText ? `${addedText ? "　" : ""}${isGen ? "所属" : "期"} ${bdText}` : ""}</div>` : ""}
+      </div>
+    </div>
+    ${g.intro ? `<div class="panel"><h3>${esc(title)}の紹介</h3><p class="gp-intro">${linkify(g.intro)}</p></div>` : ""}
+    ${stats}
+    ${extra.length ? `<div class="panel"><h3>${unit}のデータ</h3><dl class="gp-extra">${extra.map(([k, v]) => `<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join("")}</dl></div>` : ""}
     <div class="members-head">
       <h2>メンバー（${g.count}人）</h2>
-      <select id="genMemberSort" aria-label="一般メンバーの並び順">
+      ${others.length > 1 ? `<select id="genMemberSort" aria-label="一般メンバーの並び順">
         <option value="no"${genMemberSort === "no" ? " selected" : ""}>番号順</option>
         <option value="total"${genMemberSort === "total" ? " selected" : ""}>合計能力値が高い順</option>
         <option value="bday"${genMemberSort === "bday" ? " selected" : ""}>誕生日順（1月から）</option>
-      </select>
+      </select>` : ""}
     </div>
     ${headRows ? `<ol class="mlist">${headRows}</ol>` : ""}
     ${others.length ? `${headRows ? `<h3 class="mgroup">一般メンバー（${others.length}人）</h3>` : ""}<ol class="mlist">${others.map(row).join("")}</ol>` : ""}
-    <nav class="article-nav" aria-label="ほかの期">
-      ${prev ? `<button type="button" data-gen="${prev.ki}"><small>← 前の期</small><b>${prev.ki}期生${prev.team ? "「" + esc(prev.team) + "」" : ""}</b></button>` : ""}
-      ${next ? `<button class="older" type="button" data-gen="${next.ki}"><small>次の期 →</small><b>${next.ki}期生${next.team ? "「" + esc(next.team) + "」" : ""}</b></button>` : ""}
+    ${!g.count && !headRows ? `<div class="panel"><p class="news-empty">メンバーがまだいません。メンバー表の「所属」に「${esc(g.name || "")}」と書くと、ここに表示されます。</p></div>` : ""}
+    <nav class="article-nav" aria-label="ほかの${unit}">
+      ${prev ? `<button type="button" ${openAttr(prev)}><small>← 前の${unit}</small><b>${navLabel(prev)}</b></button>` : ""}
+      ${next ? `<button class="older" type="button" ${openAttr(next)}><small>次の${unit} →</small><b>${navLabel(next)}</b></button>` : ""}
     </nav>`;
   requestAnimationFrame(() => fitAll($("genPage")));
 }
+const renderGenDetail = () => renderGroupDetail("gen");
 
 /* ホーム */
 const ICONS = {
+  team:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M16 4.6a3.5 3.5 0 0 1 0 6.8M18 14a6.5 6.5 0 0 1 3.5 6"/></svg>',
   news:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>',
   cards: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M4 21a2 2 0 0 1 2-2h13v2"/><path d="M9 8h6M9 12h4"/></svg>',
   rank:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h8M12 17v4"/><path d="M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M7 6H4v1a3 3 0 0 0 3 3M17 6h3v1a3 3 0 0 1-3 3"/></svg>',
@@ -922,7 +944,7 @@ function dailyPick(){
   let x = seed; x = ((x >>> 16) ^ x) * 0x45d9f3b; x = ((x >>> 16) ^ x) >>> 0;   // 日付から毎日変わる番号
   return x % chars.length;
 }
-const cardTags = c => `<span class="tags"><span class="tag ki">${c.ki}期生</span>${c.team ? `<span class="tag team">${esc(c.team)}</span>` : ""}${c.isLeader ? `<span class="tag lead">リーダー</span>` : ""}${c.isSub ? `<span class="tag subl">サブリーダー</span>` : ""}</span>`;
+const cardTags = c => `<span class="tags"><span class="tag ki">${c.ki}期生</span>${c.team ? `<span class="tag team">${esc(c.teamGroup ? c.teamGroup.name : c.team)}</span>` : ""}${c.isLeader ? `<span class="tag lead">リーダー</span>` : ""}${c.isSub ? `<span class="tag subl">サブリーダー</span>` : ""}</span>`;
 const miniCard = (c, ctxName, i, overlay, foot, extraClass) => `<li><button class="card${extraClass || ""}" type="button" data-ctx="${ctxName}" data-i="${i}">
   <span class="pic">${pic(c)}<span class="badge">No.${c.no}</span>${overlay || ""}</span>
   <span class="body"><span class="info">${cardTags(c)}<span class="name fit">${esc(c.name)}</span><span class="yomi fit">${esc(c.yomi)}</span></span>${foot}</span>
@@ -964,6 +986,7 @@ function renderHome(){
     ["cards", "図鑑", `${chars.length}人のキャラクターを一覧で見る`],
     ["rank", "ランキング", "合計能力値や各ステータスの順位"],
     ["gen", "期データ", `${gens.length}期それぞれのリーダーと平均ステータス`],
+    ["team", "所属", `${teamGroups.length}つの所属のリーダーとメンバー`],
     ["bday", "誕生日", todayCount ? `今日は${todayCount}人の誕生日！` : "もうすぐ誕生日のキャラとカレンダー"],
     ["news", "お知らせ", vn.length ? `最新：${esc(vn[0].title)}` : "松電キャラクターズからのお知らせ"]
   ].map(([m, t, d]) => `<button class="tile" type="button" data-go="${m}"><span class="ico">${ICONS[m]}</span><b>${t}</b><small>${d}</small></button>`).join("");
@@ -984,7 +1007,7 @@ function renderHome(){
     const r = c.ranks.total;
     return `<li><button class="row${r <= 3 ? " r" + r : ""}" type="button" data-ctx="homeTop" data-i="${i}">
       <span class="place">${r}</span><span class="pic">${pic(c)}</span>
-      <span class="info"><span class="name fit">${esc(c.name)}</span><span class="sub fit">${c.ki}期生${c.team ? "　" + esc(c.team) : ""}</span></span>
+      <span class="info"><span class="name fit">${esc(c.name)}</span><span class="sub fit">${c.ki}期生${c.team ? "　" + esc(teamName(c)) : ""}</span></span>
       <span class="val"><span class="bar"><i style="width:${(c.total / maxOf.total * 100).toFixed(1)}%"></i></span><b>${c.total.toFixed(2)}</b></span>
     </button></li>`;
   }).join("");
@@ -1002,65 +1025,108 @@ function renderHome(){
   requestAnimationFrame(() => fitAll($("home")));
 }
 
-/* 期ごとのデータ */
+/* 期・所属ごとのデータ */
 const norm = s => String(s || "").replace(/[\s　]/g, "");
+// 期・所属のまとまり（メンバー・リーダー・平均値など）を作る
+function makeGroup(kind, info, ms){
+  const avg = f => ms.length ? ms.reduce((a, c) => a + f(c), 0) / ms.length : 0;
+  const findChar = name => name ? (ms.find(c => norm(c.name) === norm(name)) || chars.find(c => norm(c.name) === norm(name)) || null) : null;
+  const leader = findChar(info.leader);
+  const subList = (info.subLeaders || []).map(name => ({ name, c: findChar(name) }));
+  return {
+    kind, info, leaderName: info.leader || "", leader, subList, intro: info.intro || "", extra: info.extra || {}, count: ms.length, members: ms,
+    avgTotal: avg(c => c.total), avgSum5: avg(c => c.sum5), avgStats: STAT_NAMES.map((_, i) => avg(c => c.stats[i])),
+    avgIq: avg(c => c.iq), avgHeight: avg(c => c.height), avgAge: avg(c => c.age), avgWeight: avg(c => c.weight),
+    top: ms.length ? ms.reduce((a, c) => c.total > a.total ? c : a, ms[0]) : null
+  };
+}
+function rankGroups(list){
+  const order = list.filter(g => g.count).sort((a, b) => b.avgTotal - a.avgTotal);
+  list.forEach(g => g.rank = order.indexOf(g) + 1);
+  list.ranked = order.length;
+  list.statMax = STAT_NAMES.map((_, i) => Math.max(0, ...list.map(g => g.avgStats[i])) || 1);
+}
 function buildGens(kis, genList){
   const info = new Map(genList.map(g => [g.ki, g]));
+  chars.forEach(c => { c.isLeader = c.isSub = false; });
   gens = kis.map(k => {
-    const ms = chars.filter(c => c.ki === k);
-    const g = info.get(k) || {};
-    const avg = f => ms.reduce((a, c) => a + f(c), 0) / ms.length;
-    const leader = g.leader ? (ms.find(c => norm(c.name) === norm(g.leader)) || chars.find(c => norm(c.name) === norm(g.leader))) : null;
-    if (leader) leader.isLeader = true;
-    const findChar = name => ms.find(c => norm(c.name) === norm(name)) || chars.find(c => norm(c.name) === norm(name)) || null;
-    const subList = (g.subLeaders || []).map(name => ({ name, c: findChar(name) }));
-    subList.forEach(x => { if (x.c) x.c.isSub = true; });
-    ms.forEach(c => c.genTeam = g.team || "");
-    return {
-      ki: k, team: g.team || "", leaderName: g.leader || "", leader, subList, intro: g.intro || "", extra: g.extra || {}, count: ms.length,
-      avgTotal: avg(c => c.total), avgSum5: avg(c => c.sum5), avgStats: STAT_NAMES.map((_, i) => avg(c => c.stats[i])),
-      avgIq: avg(c => c.iq), avgHeight: avg(c => c.height), avgAge: avg(c => c.age), avgWeight: avg(c => c.weight), members: ms,
-      top: ms.reduce((a, c) => c.total > a.total ? c : a, ms[0])
-    };
+    const g = makeGroup("gen", info.get(k) || {}, chars.filter(c => c.ki === k));
+    g.ki = k; g.key = String(k); g.team = g.info.team || "";
+    if (g.leader) g.leader.isLeader = true;
+    g.subList.forEach(x => { if (x.c) x.c.isSub = true; });
+    g.members.forEach(c => c.genTeam = g.team);
+    return g;
   });
-  const order = [...gens].sort((a, b) => b.avgTotal - a.avgTotal);
-  gens.forEach(g => g.rank = order.indexOf(g) + 1);
-  gens.statMax = STAT_NAMES.map((_, i) => Math.max(...gens.map(g => g.avgStats[i])) || 1);
+  rankGroups(gens);
+}
+// 所属：所属データ表の順。メンバー表の「所属」は所属名かIDで対応づける
+function buildTeams(teamList){
+  const list = (teamList || []).map(t => ({ ...t }));
+  const known = new Set(list.flatMap(t => [norm(t.name), String(t.id)]));
+  // 所属データ表にない所属名がメンバー表にあれば、それも所属として表示
+  [...new Set(chars.map(c => c.team).filter(Boolean))].forEach(n => {
+    if (!known.has(norm(n)) && !known.has(n)) { list.push({ id: "", name: n, leader: "", subLeaders: [], intro: "", extra: {} }); known.add(norm(n)); }
+  });
+  const used = new Set();
+  chars.forEach(c => { c.teamGroup = null; c.teamRole = ""; });
+  teamGroups = list.map((t, i) => {
+    const ms = chars.filter(c => c.team && (norm(c.team) === norm(t.name) || (t.id && c.team.trim() === String(t.id))));
+    const g = makeGroup("team", t, ms);
+    g.name = t.name; g.id = String(t.id || "").trim();
+    let key = String(t.id || "").replace(/[^0-9A-Za-z_-]/g, "") || "t" + (i + 1);
+    while (used.has(key)) key += "_";
+    used.add(key); g.key = key;
+    ms.forEach(c => c.teamGroup = g);
+    g.subList.forEach(x => { if (x.c && x.c.teamGroup === g) x.c.teamRole = "サブリーダー"; });
+    if (g.leader && g.leader.teamGroup === g) g.leader.teamRole = "リーダー";
+    return g;
+  });
+  rankGroups(teamGroups);
 }
 const fmt2 = v => v.toLocaleString("ja-JP", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 const fmt1 = v => v.toLocaleString("ja-JP", { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+const teamName = c => c.teamGroup ? c.teamGroup.name : c.team;
+const groupList = kind => kind === "gen" ? gens : teamGroups;
+const groupTitle = g => g.kind === "gen" ? `${g.ki}期生` : g.name;
+const unitLabel = kind => kind === "gen" ? "期" : "所属";
+const openAttr = g => g.kind === "gen" ? `data-gen="${g.key}"` : `data-team="${esc(g.key)}"`;
 
-function genCard(g){
+function groupCard(g){
+  const list = groupList(g.kind), isGen = g.kind === "gen";
   const L = g.leader;
   const leader = L
     ? `<button class="leader" type="button" data-char="${L.no}"><span class="pic">${pic(L)}</span><span class="who"><small>リーダー</small><b class="fit">${esc(L.name)}</b></span></button>`
     : `<div class="leader"><span class="pic"><span class="initial">?</span></span><span class="who"><small>リーダー</small><b class="fit">${g.leaderName ? esc(g.leaderName) : "未設定"}</b></span></div>`;
+  const head = isGen
+    ? `<span class="gen-no">${g.ki}<small>期生</small></span><span class="gen-team fit${g.team ? "" : " unset"}">${g.team ? esc(g.team) : "愛称未設定"}</span>`
+    : `${g.id ? `<span class="team-id"><small>ID</small>${esc(g.id)}</span>` : ""}<span class="gen-team team-name fit">${esc(g.name)}</span>`;
+  const stats = g.count ? `
+      <div class="avg-total"><span>平均合計能力値</span><b>${fmt2(g.avgTotal)}</b><em>${list.ranked}${unitLabel(g.kind)}中 ${g.rank}位</em></div>
+      <div class="avg-stats">${STAT_NAMES.map((n, i) =>
+        `<span class="lbl">平均${n}</span><span class="bar"><i style="width:${(g.avgStats[i] / list.statMax[i] * 100).toFixed(1)}%"></i></span><span class="v">${Math.round(g.avgStats[i])}</span>`).join("")}</div>
+      <dl class="gen-facts">
+        <dt>平均5ステ計</dt><dd>${fmt1(g.avgSum5)}</dd>
+        <dt>平均IQ</dt><dd>${fmt1(g.avgIq)}</dd>
+        <dt>平均身長</dt><dd>${fmt1(g.avgHeight)} cm</dd>
+        <dt>平均年齢</dt><dd>${fmt1(g.avgAge)}歳</dd>
+        <dt>${isGen ? "期内" : "所属内"}トップ</dt><dd><button class="link" type="button" data-char="${g.top.no}">${esc(g.top.name)}</button>（${g.top.total.toFixed(2)}）</dd>
+        ${Object.entries(g.extra).map(([k, v]) => `<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join("")}
+      </dl>` : `<p class="news-empty">メンバーがまだいません。</p>`;
   return `<li><article class="gen">
-    <button class="gen-head" type="button" data-gen="${g.ki}" aria-label="${g.ki}期生の詳細を見る">
-      <span class="gen-no">${g.ki}<small>期生</small></span>
-      <span class="gen-team fit${g.team ? "" : " unset"}">${g.team ? esc(g.team) : "愛称未設定"}</span>
-      <span class="gen-count">${g.count}人</span>
+    <button class="gen-head" type="button" ${openAttr(g)} aria-label="${esc(groupTitle(g))}の詳細を見る">
+      ${head}<span class="gen-count">${g.count}人</span>
     </button>
     <div class="gen-body">
       ${g.intro ? `<p class="gen-intro">${esc(g.intro)}</p>` : ""}
       ${leader}
       ${g.subList.length ? `<div class="gen-subs"><small>サブリーダー</small><span>${g.subList.map(x => x.c
         ? `<button class="link" type="button" data-char="${x.c.no}">${esc(x.c.name)}</button>` : esc(x.name)).join("、")}</span></div>` : ""}
-      <div class="avg-total"><span>平均合計能力値</span><b>${fmt2(g.avgTotal)}</b><em>${gens.length}期中 ${g.rank}位</em></div>
-      <div class="avg-stats">${STAT_NAMES.map((n, i) =>
-        `<span class="lbl">平均${n}</span><span class="bar"><i style="width:${(g.avgStats[i] / gens.statMax[i] * 100).toFixed(1)}%"></i></span><span class="v">${Math.round(g.avgStats[i])}</span>`).join("")}</div>
-      <dl class="gen-facts">
-        <dt>平均5ステ計</dt><dd>${fmt1(g.avgSum5)}</dd>
-        <dt>平均IQ</dt><dd>${fmt1(g.avgIq)}</dd>
-        <dt>平均身長</dt><dd>${fmt1(g.avgHeight)} cm</dd>
-        <dt>平均年齢</dt><dd>${fmt1(g.avgAge)}歳</dd>
-        <dt>期内トップ</dt><dd><button class="link" type="button" data-char="${g.top.no}">${esc(g.top.name)}</button>（${g.top.total.toFixed(2)}）</dd>
-        ${Object.entries(g.extra).map(([k, v]) => `<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join("")}
-      </dl>
+      ${stats}
     </div>
-    <div class="gen-foot"><button type="button" data-gen="${g.ki}">${g.ki}期生の詳細とメンバーを見る</button></div>
+    <div class="gen-foot"><button type="button" ${openAttr(g)}>${esc(groupTitle(g))}の詳細とメンバーを見る</button></div>
   </article></li>`;
 }
+const genCard = groupCard;
 
 /* 表示 */
 function filtered(){
@@ -1068,16 +1134,18 @@ function filtered(){
   const ki = +$("ki").value, team = $("team").value;
   return chars.filter(c =>
     (!ki || c.ki === ki) &&
-    (!team || (team === "__none" ? !c.team : c.team === team)) &&
-    (!q || [c.name, c.yomi, c.team, c.hitokoto, c.description, c.likes, c.dislikes].join("").replace(/\s/g, "").includes(q)));
+    (!team || (team === "__none" ? !c.team : !!c.teamGroup && c.teamGroup.key === team)) &&
+    (!q || [c.name, c.yomi, c.team, teamName(c), c.hitokoto, c.description, c.likes, c.dislikes].join("").replace(/\s/g, "").includes(q)));
 }
 
 function render(){
   const isRank = mode === "rank", isGen = mode === "gen", isBday = mode === "bday", isHome = mode === "home";
   const isNews = mode === "news", isArticle = mode === "article", isGenDetail = mode === "genDetail";
+  const isTeam = mode === "team", isTeamDetail = mode === "teamDetail";
+  $("teams").hidden = !isTeam;
   $("articlePage").hidden = !isArticle;
-  $("genPage").hidden = !isGenDetail;
-  if (!isArticle && !isGenDetail) document.title = "松電キャラクターズ図鑑";
+  $("genPage").hidden = !(isGenDetail || isTeamDetail);
+  if (!isArticle && !isGenDetail && !isTeamDetail) document.title = "松電キャラクターズ図鑑";
   $("home").hidden = !isHome;
   $("newsPage").hidden = !isNews;
   $("grid").hidden = mode !== "cards";
@@ -1088,7 +1156,16 @@ function render(){
   $("sort").hidden = mode !== "cards";
   $("ki").hidden = $("team").hidden = !(mode === "cards" || isRank);
   $("genSort").hidden = !isGen;
-  $("q").hidden = isGen || isBday || isNews || isArticle || isGenDetail;
+  $("q").hidden = isGen || isBday || isNews || isArticle || isGenDetail || isTeam || isTeamDetail;
+
+  if (isTeamDetail) { $("empty").hidden = true; renderGroupDetail("team"); return; }
+  if (isTeam) {
+    $("teams").innerHTML = teamGroups.map(groupCard).join("") || `<li class="news-empty">所属データはまだありません。</li>`;
+    $("count").textContent = teamGroups.length ? `${teamGroups.length}所属を表示中` : "";
+    $("empty").hidden = true;
+    requestAnimationFrame(() => fitAll($("teams")));
+    return;
+  }
 
   if (isGenDetail) { $("empty").hidden = true; renderGenDetail(); return; }
 
@@ -1118,7 +1195,7 @@ function render(){
       return `<li><button class="row${r <= 3 ? " r" + r : ""}" type="button" data-i="${i}">
         <span class="place">${r}</span>
         <span class="pic">${pic(c)}</span>
-        <span class="info"><span class="name fit">${esc(c.name)}</span><span class="sub fit">${c.ki}期生${c.team ? "　" + esc(c.team) : ""}</span></span>
+        <span class="info"><span class="name fit">${esc(c.name)}</span><span class="sub fit">${c.ki}期生${c.team ? "　" + esc(teamName(c)) : ""}</span></span>
         <span class="val"><span class="bar"><i style="width:${(Math.max(0, m.get(c)) / maxOf[rankKey] * 100).toFixed(1)}%"></i></span><b>${m.fmt(m.get(c))}</b></span>
       </button></li>`;
     }).join("");
@@ -1131,7 +1208,7 @@ function render(){
         <span class="pic">${pic(c)}<span class="badge">No.${c.no}</span></span>
         <span class="body">
           <span class="info">
-            <span class="tags"><span class="tag ki">${c.ki}期生</span>${c.team ? `<span class="tag team">${esc(c.team)}</span>` : ""}${c.isLeader ? `<span class="tag lead">リーダー</span>` : ""}${c.isSub ? `<span class="tag subl">サブリーダー</span>` : ""}</span>
+            <span class="tags"><span class="tag ki">${c.ki}期生</span>${c.team ? `<span class="tag team">${esc(c.teamGroup ? c.teamGroup.name : c.team)}</span>` : ""}${c.isLeader ? `<span class="tag lead">リーダー</span>` : ""}${c.isSub ? `<span class="tag subl">サブリーダー</span>` : ""}</span>
             <span class="name fit">${esc(c.name)}</span>
             <span class="yomi fit">${esc(c.yomi)}</span>
           </span>
@@ -1182,7 +1259,7 @@ function show(i){
   cur = (i + view.length) % view.length;
   const c = view[cur];
   $("dImg").innerHTML = c.image ? `<img src="${esc(c.image)}" alt="${esc(c.name)}" data-fallback="${esc(initial(c))}">` : `<span class="initial">${esc(initial(c))}</span>`;
-  $("dTags").innerHTML = `<span class="tag ki">${c.ki}期生${c.genTeam ? "「" + esc(c.genTeam) + "」" : ""}</span>${c.team ? `<span class="tag team">${esc(c.team)}</span>` : ""}${c.isLeader ? `<span class="tag lead">リーダー</span>` : ""}${c.isSub ? `<span class="tag subl">サブリーダー</span>` : ""}`;
+  $("dTags").innerHTML = `<span class="tag ki">${c.ki}期生${c.genTeam ? "「" + esc(c.genTeam) + "」" : ""}</span>${c.team ? `<span class="tag team">${esc(c.teamGroup ? c.teamGroup.name : c.team)}</span>` : ""}${c.isLeader ? `<span class="tag lead">リーダー</span>` : ""}${c.isSub ? `<span class="tag subl">サブリーダー</span>` : ""}`;
   $("dNo").textContent = `No.${c.no}`;
   $("dName").textContent = c.name;
   $("dYomi").textContent = c.yomi;
@@ -1190,7 +1267,7 @@ function show(i){
   $("dHito").textContent = c.hitokoto ? `「${c.hitokoto}」` : "";
   $("dRadar").innerHTML = radar(c.stats);
   $("dFacts").innerHTML = `
-    <dt>所属</dt><dd>${c.team ? esc(c.team) : "なし"}</dd>
+    <dt>所属</dt><dd>${c.teamGroup ? `<button class="link" type="button" data-team="${esc(c.teamGroup.key)}">${esc(c.teamGroup.name)}</button>${c.teamGroup.id ? `<span class="id-chip">ID ${esc(c.teamGroup.id)}</span>` : ""}${c.teamRole ? `<small>${c.teamRole}</small>` : ""}` : c.team ? esc(c.team) : "なし"}</dd>
     <dt>誕生日</dt><dd>${c.year}年${c.month}月${c.day}日（${c.age}歳）${c.month ? `<small>${c.daysUntil === 0 ? "今日が誕生日！" : `次の誕生日まであと${c.daysUntil}日`}</small>` : ""}</dd>
     <dt>身長</dt><dd>${c.height} cm</dd>
     <dt>体重</dt><dd>${c.weight.toFixed(1)} kg</dd>
@@ -1225,24 +1302,26 @@ const openAt = e => {
 $("grid").addEventListener("click", openAt);
 $("ranking").addEventListener("click", openAt);
 // URLの末尾（#zukan など）で画面を切り替え・ブックマークできるようにする
-const HASH = { home: "home", cards: "zukan", rank: "ranking", gen: "generations", bday: "birthday", news: "news" };
-const hashFor = m => m === "article" ? "news-" + curNewsId : m === "genDetail" ? "gen-" + curGenKi : HASH[m];
+const HASH = { home: "home", cards: "zukan", rank: "ranking", gen: "generations", team: "teams", bday: "birthday", news: "news" };
+const hashFor = m => m === "article" ? "news-" + curNewsId : m === "genDetail" ? "gen-" + curGenKi : m === "teamDetail" ? "team-" + curTeamKey : HASH[m];
 const modeFromHash = () => {
   const m = location.hash.match(/^#news-([0-9a-z]+)$/);
   if (m) { curNewsId = m[1]; return "article"; }
   const gm = location.hash.match(/^#gen-(\d+)$/);
   if (gm) { curGenKi = +gm[1]; return "genDetail"; }
+  const tm = location.hash.match(/^#team-([0-9A-Za-z_-]+)$/);
+  if (tm) { curTeamKey = tm[1]; return "teamDetail"; }
   return Object.keys(HASH).find(k => "#" + HASH[k] === location.hash) || "home";
 };
 function setMode(m, fromHash){
   mode = m;
-  const segMode = m === "genDetail" ? "gen" : m === "article" ? "news" : m;
+  const segMode = m === "genDetail" ? "gen" : m === "teamDetail" ? "team" : m === "article" ? "news" : m;
   document.querySelectorAll(".seg button").forEach(x => x.setAttribute("aria-pressed", x.dataset.mode === segMode));
   if (!fromHash && location.hash !== "#" + hashFor(m)) history.pushState(null, "", "#" + hashFor(m));
   render();
   if (!fromHash) {
     if (m === "article") $("articlePage").scrollIntoView({ block: "start" });
-    else if (m === "genDetail") $("genPage").scrollIntoView({ block: "start" });
+    else if (m === "genDetail" || m === "teamDetail") $("genPage").scrollIntoView({ block: "start" });
     else window.scrollTo({ top: 0 });
   }
 }
@@ -1259,7 +1338,20 @@ document.addEventListener("click", e => {
   if (e.target.closest("[data-back]")) { setMode("news"); return; }
   const gb = e.target.closest("[data-gen]");
   if (gb) { curGenKi = +gb.dataset.gen; genMemberSort = "no"; setMode("genDetail"); return; }
-  if (e.target.closest("[data-back-gen]")) setMode("gen");
+  if (e.target.closest("[data-back-gen]")) { setMode("gen"); return; }
+  const tb = e.target.closest("[data-team]");
+  if (tb) { if ($("dlg").open) $("dlg").close(); curTeamKey = tb.dataset.team; genMemberSort = "no"; setMode("teamDetail"); return; }
+  if (e.target.closest("[data-back-team]")) setMode("team");
+});
+$("teams").addEventListener("click", e => {
+  const ch = e.target.closest("[data-char]"); if (!ch) return;
+  const c = chars.find(x => x.no === +ch.dataset.char); if (!c) return;
+  const g = teamGroups.find(x => x.members.includes(c));
+  view = g ? [...g.members].sort(sorters.no) : [c];
+  if (!view.includes(c)) view.unshift(c);
+  if (!$("dlg").open) $("dlg").showModal();
+  show(view.indexOf(c));
+  $("dName").focus({ preventScroll: true });
 });
 $("genPage").addEventListener("click", e => {
   const b = e.target.closest("[data-ctx]"); if (!b) return;
@@ -1269,7 +1361,7 @@ $("genPage").addEventListener("click", e => {
   $("dName").focus({ preventScroll: true });
 });
 $("genPage").addEventListener("change", e => {
-  if (e.target.id === "genMemberSort") { genMemberSort = e.target.value; renderGenDetail(); }
+  if (e.target.id === "genMemberSort") { genMemberSort = e.target.value; renderGroupDetail(mode === "teamDetail" ? "team" : "gen"); }
 });
 $("home").addEventListener("click", e => {
   if (e.target.closest("#repick")) {
